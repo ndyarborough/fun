@@ -8,6 +8,7 @@ import ViewProfile from './components/ViewProfile';
 import EventDetails from './components/EventDetails';
 import BrowseEvents from './components/BrowseEvents';
 import CreateEvent from './components/CreateEvent';
+import EditEvent from './components/EditEvent';
 import Login from './components/Login';
 import Preferences from './components/Preferences';
 import Toast from 'react-native-toast-message';
@@ -44,6 +45,7 @@ const App = () => {
           </Stack.Screen>
             <Stack.Screen name="EventDetails" component={EventDetails} />
             <Stack.Screen name="CreateEvent" component={CreateEvent} />
+            <Stack.Screen name="EditEvent" component={EditEvent}/>
             <Stack.Screen name="BottomNavbar" component={BottomNavbar} />
           </Stack.Navigator>
         </View>

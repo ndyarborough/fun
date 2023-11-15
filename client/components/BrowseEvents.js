@@ -17,7 +17,7 @@ const BrowseEvents = ({ route, navigation, userInfo, setUserInfo }) => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleViewDetails = (eventId) => {
-    navigation.navigate('EventDetails', { eventId });
+    navigation.navigate('EventDetails', { eventId, userId: userInfo._id });
   };
 
   const handleRSVP = (eventId, userId) => {

@@ -1,6 +1,12 @@
 import { apiBaseUrl } from '../utils/apiUtils';
 
 const eventApi = {
+  getEvent: async (eventId) => {
+    const response = await fetch(`${apiBaseUrl}/event/fetch/${eventId}`);
+
+    const events = await response.json();
+    return events;
+  },
   getEvents: async () => {
     const response = await fetch(`${apiBaseUrl}/event/fetch`);
 
@@ -19,6 +25,18 @@ const eventApi = {
 
     const event = await response.json();
     return event;
+  },
+
+  update: async (eventId, formData) => {
+    const requestOptions = {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json'},
+      body: JSON.stringify(formData),
+    }
+
+    const response = await fetch(`${apiBaseUrl}/event/update/${eventId}`, requestOptions);
+    const updatedEvent = await response.json();
+    return updatedEvent;
   },
 
   rsvp: async (eventId, hostId) => {

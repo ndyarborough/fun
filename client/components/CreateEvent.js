@@ -54,7 +54,6 @@ const CreateEvent = ({ route, navigation }) => {
     date: new Date(),
     startTime: defaultStartTime,
     endTime: defaultEndTime,
-    duration: '',
     address: '',
     capacity: '',
     description: '',
@@ -66,10 +65,6 @@ const CreateEvent = ({ route, navigation }) => {
 
   const validateEventName = (eventName) => {
     return eventName.length > 0;
-  };
-
-  const validateDuration = (duration) => {
-    return !isNaN(parseFloat(duration)) && isFinite(duration) && duration > 0;
   };
 
   const validateAddress = (address) => {
@@ -92,10 +87,6 @@ const CreateEvent = ({ route, navigation }) => {
 
     if (!validateEventName(formData.eventName)) {
       errors.push('Event Name is required');
-    }
-
-    if (!validateDuration(formData.duration)) {
-      errors.push('Duration must be a number');
     }
 
     if (!validateAddress(formData.address)) {
@@ -160,18 +151,12 @@ const CreateEvent = ({ route, navigation }) => {
           disableClock={true}
           onChange={(time) => setFormData({ ...formData, startTime: time })}
         />
-        <Text>Start Time</Text>
+        <Text>End Time</Text>
         <TimePicker
           style={styles.input}
           value={formData.endTime}
           disableClock={true}
           onChange={(time) => setFormData({ ...formData, endTime: time })}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Duration (hours)"
-          value={formData.duration}
-          onChangeText={(text) => setFormData({ ...formData, duration: text })}
         />
         <TextInput
           style={styles.input}

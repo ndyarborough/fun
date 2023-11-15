@@ -1,10 +1,24 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
+import eventApi from '../api/eventApi';
+import userApi from '../api/userApi';
 
 const EventItem = ({ event, handleRSVP, handleViewDetails, handleReportPost, userInfo }) => {
   // Log the event at the beginning
   const eventId = event._id
   console.log(event.host)
+  const [eventHost, setEventHost] = useState(null)
+
+  useEffect(() => {
+    eventApi.getEvent(eventId).then((eventData) => {
+      userApi.getUserInfo(event.host).then(user => {
+        console.log(eventData)
+        setEventHost(user.fullName)
+      })
+      console.log(eventData);
+      setEvent(eventData);
+    });
+  }, [eventId]);
 
   return (
     <View style={styles.container}>
@@ -12,10 +26,9 @@ const EventItem = ({ event, handleRSVP, handleViewDetails, handleReportPost, use
       <View style={styles.leftContainer}>
         <Text>{event.eventName}</Text>
         <Text>Date: {new Date(event.date).toLocaleDateString()}</Text>
-        <Text>Duration: {parseFloat(event.duration / 60).toFixed(2)} hours</Text>
         <Text>Address: {event.address}</Text>
         <Text>Capacity: {event.capacity}</Text>
-        <Text>Host: {event.host}</Text>
+        <Text>Host: {eventHost}</Text>
       </View>
 
       {/* Right side (20%) */}

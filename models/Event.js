@@ -20,10 +20,6 @@ const eventSchema = new Schema({
         type: Date,
         required: true
     },    
-    duration: {
-        type: Number,
-        required: true,
-    },
     address: {
         type: String,
         required: true,

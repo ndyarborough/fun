@@ -2,9 +2,10 @@ import { apiBaseUrl } from '../utils/apiUtils';
 
 const userApi = {
   getUserInfo: async (userId) => {
-    const response = await fetch(`${apiBaseUrl}/user/getUserInfo/${userId}`);
+    console.log(userId);
+    const response = await fetch(`${apiBaseUrl}/user/fetch/${userId}`);
     const userInfo = await response.json();
-    return response;
+    return userInfo; // Add this line to return userInfo
   },
   register: async (username, email, password, fullName) => {
     const response = await fetch(`${apiBaseUrl}/user/register/${username}/${email}/${password}/${fullName}`, {

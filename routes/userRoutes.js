@@ -3,6 +3,7 @@ const router = express.Router();
 const User = require('../models/User'); // Import the User model
 const Event = require('../models/Event'); // Import the User model
 const Preferences = require('../models/Preferences');
+const mongoose = require('mongoose')
 
 const bcrypt = require('bcrypt')
 
@@ -47,18 +48,21 @@ router.get('/hello', async (req, res) => {
 
 // Route for fetching user data (example)
 router.get('/fetch/:userId', async (req, res) => {
+  console.log
   try {
     const userId = req.params.userId;
     const user = await User.findById(userId);
+
+    console.log(user)
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
     // Exclude sensitive information like the password before sending the user data
-    const sanitizedUser = { _id: user._id, username: user.username, email: user.email };
+    // const sanitizedUser = { _id: user._id, username: user.username, email: user.email };
 
-    res.json(sanitizedUser);
+    res.json(user);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error fetching user data' });
@@ -77,7 +81,7 @@ router.post('/delete-user', async (req, res) => {
     })
 })
 //update user route
-router.post('/update-user', async (req, res) => {
+router.put('/update-user', async (req, res) => {
   const userId = req.body.userId;
   const updatedData = {
     username: req.body.username,
