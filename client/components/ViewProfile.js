@@ -16,6 +16,7 @@ const ViewProfile = ({ route, navigation, updateUser, userInfo }) => {
     const fetchUserInfo = async () => {
       if (route.params) {
         console.log('there were route params')
+        console.log(route.params)
         updateUser(JSON.parse(route.params.user));
       } else {
         console.log('no route params')
