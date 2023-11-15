@@ -7,7 +7,7 @@ const mongoose = require('mongoose');
 
 // Route for event creation
 router.post('/create', async (req, res) => {
-  const { eventName, date, startTime, endTime, duration, address, capacity, description, host, recurring } = req.body;
+  const { eventName, date, startTime, endTime, address, capacity, description, host, recurring } = req.body;
 
   try {
     // Parse the date, startTime, and endTime to valid Date objects
@@ -21,7 +21,6 @@ router.post('/create', async (req, res) => {
       date: parsedDate,
       startTime: parsedStartTime,
       endTime: parsedEndTime,
-      duration,
       address,
       capacity,
       description,
@@ -100,9 +99,12 @@ router.get('/fetch', async (req, res) => {
     }
 });
 
+
+// Fetch user event by Id
 router.get('/fetch/:eventId', async (req, res) => {
+  console.log('fetch event')
     try{
-        const eventId = new mongoose.Types.ObjectId(req.params.eventId);
+        const eventId = req.params.eventId;
         const event = await Event.findById(eventId);
         res.json(event);
     }catch (error){
@@ -124,28 +126,37 @@ router.post('/delete-event', async (req, res)=> {
     })
 });
 
-//Route for updating event
-router.post('/update-event', async (req, res) =>{
-    const eventId = req.body.eventId;
-    const updatedData = {
-        eventName: req.body.eventName,
-        date: req.body.date,
-        duration: req.body.duration,
-        address: req.body.address,
-        capacity: req.body.capacity,
-        description: req.body.description,
-        host: req.body.host,
-        reacurring: req.body.reacurring,
-    };
+// Route for updating event
+router.put('/update/:eventId', async (req, res) => {
+  const eventId = req.params.eventId; // Use req.params to get the eventId from the URL
+  const updatedData = {
+    eventName: req.body.eventName,
+    date: req.body.date,
+    address: req.body.address,
+    capacity: req.body.capacity,
+    description: req.body.description,
+    host: req.body.host,
+    recurring: req.body.recurring, // Correct the typo: change 'reacurring' to 'recurring'
+  };
 
-    Event.findByIdAndUpdate(eventId, updatedData, {new: true}, (err, updatedEvent) =>{
-        if (err){
-            res.status(500).json({error: 'Could not update event'});
-        } else{
-            res.status(200).json(updatedEvent);
-        }
-    })
-})
+  try {
+    const updatedEvent = await Event.findByIdAndUpdate(
+      eventId,
+      updatedData,
+      { new: true }
+    );
+
+    if (!updatedEvent) {
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    res.status(200).json(updatedEvent);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Could not update event' });
+  }
+});
+
 
 router.post('/rsvp/:eventId/:userId', async (req, res) => {
     const eventId = req.params.eventId;

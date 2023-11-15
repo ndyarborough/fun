@@ -6,9 +6,11 @@ import eventApi from '../api/eventApi';
 // Import the delete icon
 import deleteIcon from '../assets/delete.png';
 import editIcon from '../assets/editing.png';
+import { useNavigation } from '@react-navigation/native';
 
 const MyEvents = ({ navigation, myEvents, userId, onDeleteEvent }) => {
   const [pressedEvent, setPressedEvent] = useState(null);
+  const {navigate} = useNavigation();
 
   const handleEventPress = (eventId) => {
     setPressedEvent(eventId);
@@ -23,6 +25,13 @@ const MyEvents = ({ navigation, myEvents, userId, onDeleteEvent }) => {
     } catch (error) {
       console.error('Error deleting event:', error);
     }
+  };
+
+  const handleEditPress = async (eventId) => {
+    console.log('handle edit press')
+    console.log(eventId)
+    //navigate to EditEvent and pass eventId
+    navigate('EditEvent', {eventId: eventId});
   };
 
   return (
