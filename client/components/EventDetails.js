@@ -87,7 +87,10 @@ const EventDetails = ({ route, navigation }) => {
                   <Text style={styles.rsvpName}>{item.username}</Text>
                   <View style={styles.rsvpIcons}>
                     {/* Icon for messaging */}
-                    <TouchableOpacity onPress={() => console.log('trying to message user')}>
+                    <TouchableOpacity onPress={() => {
+                      console.log(`Sending message to ${item.username}, id: ${item._id}`)
+                      navigation.navigate('Message', {username: item.username, userId: item._id} )
+                    }}>
                       <Image source={require('../assets/message.png')} style={styles.icon} />
                     </TouchableOpacity>
 

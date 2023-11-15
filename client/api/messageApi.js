@@ -2,8 +2,10 @@ const apiBaseUrl = 'http://localhost:3000';
 
 const messageApi = {
   sendMessage: async (senderId, receiverId, content) => {
+    console.log('Sender ID:', senderId);
+console.log('Receiver ID:', receiverId);
     try {
-      const response = await fetch(`${apiBaseUrl}/messages/sendMessage`, {
+      const response = await fetch(`${apiBaseUrl}/messages/send`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -15,61 +17,26 @@ const messageApi = {
         throw new Error('Failed to send message');
       }
 
-      return response.json();
+      const result = await response.json();
+      console.log(result)
+      return result;
     } catch (error) {
       console.error('Error sending message:', error);
       throw error;
     }
   },
 
-  acknowledgeMessage: async (messageId) => {
+  getThreadHistory: async (senderId, receiverId) => {
     try {
-      const response = await fetch(`${apiBaseUrl}/messages/acknowledgeMessage/${messageId}`, {
-        method: 'PATCH',
-      });
-
+      const response = await fetch(`${apiBaseUrl}/messages/thread-history/${senderId}/${receiverId}`);
       if (!response.ok) {
-        throw new Error('Failed to acknowledge message');
+        throw new Error('Failed to fetch thread history');
       }
-
-      return response.json();
+      const threadHistory = await response.json();
+      console.log(threadHistory); // Log the thread history to check its structure
+      return threadHistory;
     } catch (error) {
-      console.error('Error acknowledging message:', error);
-      throw error;
-    }
-  },
-
-  sendMessageToMany: async (senderId, receiverIds, content) => {
-    try {
-      const response = await fetch(`${apiBaseUrl}/messages/sendMessageToMany`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ senderId, receiverIds, content }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to send message to multiple users');
-      }
-
-      return response.json();
-    } catch (error) {
-      console.error('Error sending message to multiple users:', error);
-      throw error;
-    }
-  },
-  getAllUserMessages: async (userId) => {
-    try {
-      const response = await fetch(`${BASE_URL}/users/${userId}/messages`);
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch user messages');
-      }
-
-      return response.json();
-    } catch (error) {
-      console.error('Error fetching user messages:', error);
+      console.error('Error fetching thread history:', error);
       throw error;
     }
   },

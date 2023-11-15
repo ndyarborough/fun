@@ -10,7 +10,7 @@ import BrowseEvents from './components/BrowseEvents';
 import CreateEvent from './components/CreateEvent';
 import EditEvent from './components/EditEvent';
 import Login from './components/Login';
-// import Messages from './components/Messages';
+import Message from './components/MessageScreen.js';
 import Preferences from './components/Preferences';
 import Toast from 'react-native-toast-message';
 import BottomNavbar from './components/BottomNavbar';
@@ -40,8 +40,10 @@ const App = () => {
             <Stack.Screen name="Login">
             {(props) => <Login {...props} updateUser={updateUser} />}
           </Stack.Screen>
+          <Stack.Screen name="Message">
+            {(props) => <Message {...props} senderId={userInfo._id} />}
+          </Stack.Screen>
             <Stack.Screen name="Preferences" component={Preferences} />
-            {/* <Stack.Screen name="Messages" component={Messages} /> */}
             <Stack.Screen name="BrowseEvents">
             {(props) => <BrowseEvents {...props} updateUser={updateUser} userInfo={userInfo} />}
           </Stack.Screen>

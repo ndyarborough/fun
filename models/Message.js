@@ -1,28 +1,26 @@
+// models/Message.js
+
 const mongoose = require('mongoose');
-const { Schema } = mongoose;
+const Schema = mongoose.Schema;
 
 const messageSchema = new Schema({
-  timeSent: {
-    type: Date,
-    default: Date.now,
+  sender: {
+    type: Schema.Types.ObjectId,
+    ref: 'User', // Make sure to replace 'User' with the actual model name for users
+    required: true,
   },
-  acknowledged: {
-    type: Boolean,
-    default: false,
+  receiver: {
+    type: Schema.Types.ObjectId,
+    ref: 'User', // Make sure to replace 'User' with the actual model name for users
+    required: true,
   },
   content: {
     type: String,
     required: true,
   },
-  sender: {
-    type: Schema.Types.ObjectId,
-    ref: 'User', // Reference to the User model
-    required: true,
-  },
-  receiver: {
-    type: Schema.Types.ObjectId,
-    ref: 'User', // Reference to the User model
-    required: true,
+  timestamp: {
+    type: Date,
+    default: Date.now,
   },
 });
 
