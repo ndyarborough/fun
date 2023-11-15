@@ -8,12 +8,13 @@ import eventApi from '../api/eventApi';
 
 const BrowseEvents = ({ route, navigation, userInfo, setUserInfo }) => {
   const [events, setEvents] = useState([]);
-  const [originalEvents, setOriginalEvents] = useState([]);  // New state for the original unfiltered events
+  const [originalEvents, setOriginalEvents] = useState([]);
   const [rsvpMessage, setRsvpMessage] = useState('');
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const [startTime, setStartTime] = useState('12:00');
   const [endTime, setEndTime] = useState('12:00');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleViewDetails = (eventId) => {
     navigation.navigate('EventDetails', { eventId });
@@ -71,40 +72,31 @@ const BrowseEvents = ({ route, navigation, userInfo, setUserInfo }) => {
   };
 
   const handleFilterButtonPress = () => {
-    // Filter events based on selected date range and time range
     const filteredEvents = originalEvents.filter((event) => {
       const eventDate = new Date(event.date);
-
-      // Adjust start date to the beginning of the day
       startDate.setHours(0, 0, 0, 0);
-
-      // Adjust end date to the end of the day
       endDate.setHours(23, 59, 59, 999);
 
-      // Parse event start time
       const eventStartTimeParts = event.startTime.split(':');
       const eventStartTime = new Date(eventDate);
       eventStartTime.setHours(parseInt(eventStartTimeParts[0], 10));
       eventStartTime.setMinutes(parseInt(eventStartTimeParts[1], 10));
 
-      // Parse event end time
       const eventEndTimeParts = event.endTime.split(':');
       const eventEndTime = new Date(eventDate);
       eventEndTime.setHours(parseInt(eventEndTimeParts[0], 10));
       eventEndTime.setMinutes(parseInt(eventEndTimeParts[1], 10));
 
-      // Check if the event's date is within the selected range
       const isDateInRange = eventDate >= startDate && eventDate <= endDate;
-
-      // Add conditions for time filtering
       const isStartTimeInRange = eventStartTime.toLocaleTimeString('en-US', { hour12: false }) >= startTime;
       const isEndTimeInRange = eventEndTime.toLocaleTimeString('en-US', { hour12: false }) <= endTime;
+      const isSearchMatch = event.eventName.toLowerCase().includes(searchQuery.toLowerCase());
 
-      // Example: Include event in filteredEvents only if date and time conditions are met
-      return isDateInRange  && isStartTimeInRange && isEndTimeInRange;
+      console.log(isSearchMatch)
+
+      return isDateInRange && isStartTimeInRange && isEndTimeInRange && isSearchMatch;
     });
 
-    // Update the events state with the filtered events
     setEvents(filteredEvents);
   };
 
@@ -112,7 +104,7 @@ const BrowseEvents = ({ route, navigation, userInfo, setUserInfo }) => {
     eventApi.getEvents()
       .then(events => {
         setEvents(events);
-        setOriginalEvents(events);  // Save the original unfiltered events
+        setOriginalEvents(events);
         console.log(events);
       })
       .catch(error => {
@@ -136,6 +128,8 @@ const BrowseEvents = ({ route, navigation, userInfo, setUserInfo }) => {
         handleDateChange={handleDateChange}
         handleTimeChange={handleTimeChange}
         onFilterPress={handleFilterButtonPress}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
       />
 
       <EventList
