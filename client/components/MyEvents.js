@@ -5,6 +5,7 @@ import eventApi from '../api/eventApi';
 
 // Import the delete icon
 import deleteIcon from '../assets/delete.png';
+import editIcon from '../assets/editing.png';
 
 const MyEvents = ({ navigation, myEvents, userId, onDeleteEvent }) => {
   const [pressedEvent, setPressedEvent] = useState(null);
@@ -46,7 +47,13 @@ const MyEvents = ({ navigation, myEvents, userId, onDeleteEvent }) => {
                   <Text>{event.description}</Text>
                 </View>
               </RectButton>
-
+              {/*Edit Button*/}
+              <Pressable
+                style= {styles.editButton}
+                onPress={() => handleEditPress(event._id)}
+              >
+                <Image source={editIcon} style={styles.editIcon}/>
+              </Pressable>
               {/* Delete Button */}
               <Pressable
                 style={styles.deleteButton}
@@ -112,6 +119,18 @@ const styles = StyleSheet.create({
     width: 20, // Set the width of the icon
     height: 20, // Set the height of the icon
   },
+  editButton: {
+    position: 'absolute',
+    top: 5,
+    right: 30,
+    padding: 5,
+    borderRadius: 5,
+    backgroundColor: 'transparent',
+  },
+  editIcon: {
+    height: 20,
+    width: 20,
+  }
 });
 
 export default MyEvents;
