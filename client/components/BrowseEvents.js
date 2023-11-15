@@ -101,6 +101,20 @@ const BrowseEvents = ({ route, navigation, userInfo, setUserInfo }) => {
   };
 
   useEffect(() => {
+     // Set initial values for start date, end date, start time, and end time filters
+     const today = new Date();
+     const today2 = new Date();
+     const sevenDaysAgo = today.setUTCDate(today.getUTCDate() - 7);
+     const oneMonthFromToday = new Date(today2);
+     oneMonthFromToday.setMonth(oneMonthFromToday.getMonth() + 1);
+ 
+     setStartDate(sevenDaysAgo);
+     setEndDate(oneMonthFromToday);
+     setStartTime('00:00'); // Set start time to 12:00 AM
+     setEndTime('23:59');   // Set end time to 11:59 PM
+
+    setStartDate(today);
+    setEndDate(oneMonthFromToday);
     eventApi.getEvents()
       .then(events => {
         setEvents(events);

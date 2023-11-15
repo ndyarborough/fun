@@ -126,10 +126,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F8F8FF',
     padding: 20,
-    minWidth: '90vw'
+    minWidth: '90%'
   },
   profile: {
-    minWidth: '90%'
+    minWidth: '100%'
   },
   button: {
     border: 'solid black 1px',
