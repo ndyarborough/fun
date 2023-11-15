@@ -96,6 +96,19 @@ const eventApi = {
       throw error; // Rethrow the error for the caller to handle
     }
   },
+  getRsvpList: async (eventId) => {
+    try {
+      const response = await fetch(`${apiBaseUrl}/events/${eventId}/rsvps`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch RSVP list');
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error fetching RSVP list:', error);
+      throw error;
+    }
+  },
 }
 
 export default eventApi;

@@ -105,7 +105,7 @@ router.get('/fetch/:eventId', async (req, res) => {
   console.log('fetch event')
     try{
         const eventId = req.params.eventId;
-        const event = await Event.findById(eventId);
+        const event = await Event.findById(eventId).populate('rsvps');
         res.json(event);
     }catch (error){
         console.error('Error fetching events:', error);
@@ -171,15 +171,15 @@ router.post('/rsvp/:eventId/:userId', async (req, res) => {
         }
 
         // Check if the user is already in the rsvps array
-        const userIndex = event.rsvps.users.findIndex(user => user.toString() === userId);
+        const userIndex = event.rsvps.findIndex(user => user.toString() === userId);
 
         if (userIndex !== -1) {
             // If user is already in the RSVP list, remove them
-            event.rsvps.users.splice(userIndex, 1);
+            event.rsvps.splice(userIndex, 1);
             res.status(200).json({ message: `You are no longer RSVP\'d for \"${event.eventName}\"`, event });
         } else {
             // If user is not in the RSVP list, add them
-            event.rsvps.users.push(userId);
+            event.rsvps.push(userId);
             res.status(200).json({ message: `You have RSVP\'d for \"${event.eventName}\"`, event });  
         }
 
@@ -233,6 +233,25 @@ router.post('/report', async (req, res) => {
     } catch (error) {
       console.error('Error reporting event:', error);
       res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
+
+  router.get('/:eventId/rsvps', async (req, res) => {
+    try {
+      const eventId = req.params.eventId;
+  
+      // Find the event
+      const event = await Event.findById(eventId);
+  
+      if (!event) {
+        return res.status(404).json({ error: 'Event not found.' });
+      }
+  
+      res.json(event.rsvps);
+    } catch (error) {
+      console.error('Error fetching event RSVPs:', error);
+      res.status(500).json({ error: 'Internal server error.' });
     }
   });
 

@@ -1,66 +1,40 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import BottomNavBar from './BottomNavbar';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image } from 'react-native';
 import eventApi from '../api/eventApi';
-import userApi from '../api/userApi';
 
 const EventDetails = ({ route, navigation }) => {
   const { eventId, userId } = route.params;
   const [event, setEventData] = useState(null);
-  const [userInfo, setUserInfo] = useState(null);
+  const [rsvps, setRsvps] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+
   useEffect(() => {
-    eventApi.getEvent(eventId)
-      .then(async (event) => {
-        const user = await userApi.getUserInfo(event.host);
-        setUserInfo(user);
-  
-        const startTime = new Date(event.startTime);
-        const endTime = new Date(event.endTime);
-  
-        // Check if startTime and endTime are valid date objects
-        if (!isNaN(startTime) && !isNaN(endTime)) {
-          const localStartTime = startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-          const localEndTime = endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  
-          console.log(localStartTime);
-          console.log(localEndTime);
-  
-          const formattedEvent = {
-            eventName: event.eventName,
-            date: event.date,
-            startTime: localStartTime,
-            endTime: localEndTime,
-            duration: event.duration,
-            address: event.address,
-            capacity: event.capacity,
-            description: event.description,
-            host: user.fullName,
-            recurring: event.recurring,
-          };
-  
-          setEventData(formattedEvent);
-          setLoading(false);
-        } else {
-          console.error('Invalid startTime or endTime format');
-          // Handle the error or set default values if needed
-          setLoading(false);
-        }
-      })
-      .catch((error) => {
-        console.error('Error fetching user data:', error);
-      });
-  }, []);
-  
+    const fetchData = async () => {
+      try {
+        // Fetch event details
+        const eventResponse = await eventApi.getEvent(eventId);
+        console.log(eventResponse.rsvps)
+        setEventData(eventResponse);
+        setRsvps(eventResponse.rsvps)
+        // // Fetch RSVPs for the event
+        // const rsvpResponse = await eventApi.getRsvpList();
+        setRsvps(eventResponse.rsvps)
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [eventId]);
+
   return (
     <View style={styles.container}>
       {loading ? (
         <Text>Loading event data...</Text>
       ) : (
         <View style={styles.container}>
-
-          <Text>Events</Text>
           <Text style={styles.headerText}>{event.eventName}</Text>
 
           <View style={styles.row}>
@@ -100,13 +74,38 @@ const EventDetails = ({ route, navigation }) => {
 
           <View style={styles.row}>
             <Text style={styles.label}>Recurring:</Text>
-            <Text style={styles.value}>{event.reacurring ? "Yes" : "No"}</Text>
+            <Text style={styles.value}>{event.recurring ? "Yes" : "No"}</Text>
           </View>
-        </View>
 
-      )} </View>
+          <View style={styles.row}>
+            <Text style={styles.label}>RSVPs:</Text>
+            <FlatList
+              data={rsvps}
+              keyExtractor={(item) => `${item.userId}-${item.email}`}
+              renderItem={({ item }) => (
+                <View style={styles.rsvpRow}>
+                  <Text style={styles.rsvpName}>{item.username}</Text>
+                  <View style={styles.rsvpIcons}>
+                    {/* Icon for messaging */}
+                    <TouchableOpacity onPress={() => console.log('trying to message user')}>
+                      <Image source={require('../assets/message.png')} style={styles.icon} />
+                    </TouchableOpacity>
+
+                    {/* Icon for adding as a friend */}
+                    <TouchableOpacity onPress={() => console.log('adding friend')}>
+                      <Image source={require('../assets/addFriend.png')} style={styles.icon} />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              )}
+            />
+          </View>
+
+        </View>
+      )}
+    </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -120,8 +119,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: 'column',
     marginBottom: 10,
   },
   label: {
@@ -131,6 +129,31 @@ const styles = StyleSheet.create({
   value: {
     fontSize: 16,
   },
+  rsvpRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+    borderWidth: 1, // Add border
+    borderColor: '#ddd', // Border color
+    padding: 10, // Add padding
+    borderRadius: 8, // Add border radius for rounded corners
+  },
+  rsvpName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  rsvpIcons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  icon: {
+    width: 24,
+    height: 24,
+    marginHorizontal: 5,
+  },
 });
+
+
 
 export default EventDetails;
