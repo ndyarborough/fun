@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
-import eventApi from '../api/eventApi';
-import userApi from '../api/userApi';
+// import eventApi from '../api/eventApi';
+// import userApi from '../api/userApi';
 
 const EventItem = ({ event, handleRSVP, handleViewDetails, handleReportPost, userInfo }) => {
   // Log the event at the beginning
@@ -9,16 +9,16 @@ const EventItem = ({ event, handleRSVP, handleViewDetails, handleReportPost, use
   console.log(event.host)
   const [eventHost, setEventHost] = useState(null)
 
-  useEffect(() => {
-    eventApi.getEvent(eventId).then((eventData) => {
-      userApi.getUserInfo(event.host).then(user => {
-        console.log(eventData)
-        setEventHost(user.fullName)
-      })
-      console.log(eventData);
-      setEvent(eventData);
-    });
-  }, [eventId]);
+  // useEffect(() => {
+  //   eventApi.getEvent(eventId).then((eventData) => {
+  //     userApi.getUserInfo(event.host).then(user => {
+  //       console.log(eventData)
+  //       setEventHost(user.fullName)
+  //     })
+  //     console.log(eventData);
+  //     setEvent(eventData);
+  //   });
+  // }, [eventId]);
 
   return (
     <View style={styles.container}>

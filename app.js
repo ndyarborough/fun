@@ -29,7 +29,9 @@ app.use(bodyParser.json());
 
 // User routes
 const userRoutes = require('./routes/userRoutes');
+const messageRoutes = require('./routes/messageRoutes');
 const eventRoutes = require('./routes/eventRoutes');
+app.use('/messages', messageRoutes);
 app.use('/user', userRoutes);
 app.use('/event', eventRoutes);
 

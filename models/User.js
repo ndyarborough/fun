@@ -33,9 +33,8 @@ const userSchema = new Schema({
     {type: Schema.Types.ObjectId, ref: 'Preferences'}
   ],
   messages: [
-    {type: Schema.Types.ObjectId, ref: 'Message'}
-  ]
-
+    { type: Schema.Types.ObjectId, ref: 'Message' },
+  ],
 });
 
 // Hash the password before saving
