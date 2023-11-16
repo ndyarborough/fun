@@ -81,21 +81,9 @@ This is the Meetup project repository. It's designed to help users connect with 
 
 Follow these steps to set up and run the project on your local machine and contribute to the development.
 
-1. **Clone the repository:**
-
-    ```bash
-    git clone https://github.com/Ryanslep/Meetup.git
-    ```
-
-2. **Change into the project directory:**
-
-    ```bash
-    cd Meetup
-    ```
-
 ### Switch to Existing Branch
 
-3. **Switch to the existing branch with your name:**
+1. **Switch to the existing branch with your name:**
 
     ```bash
     git checkout your_name
@@ -103,7 +91,7 @@ Follow these steps to set up and run the project on your local machine and contr
 
 ### Install Dependencies
 
-4. **Install dependencies:**
+2. **Install dependencies:**
 
     ```bash
     npm install
@@ -115,7 +103,7 @@ Follow these steps to set up and run the project on your local machine and contr
 
 ### Commit Changes
 
-6. **Commit your changes:**
+3. **Commit your changes:**
 
     ```bash
     git add .
@@ -124,7 +112,7 @@ Follow these steps to set up and run the project on your local machine and contr
 
 ### Push Changes
 
-7. **Push changes to your branch:**
+4. **Push changes to your branch:**
 
     ```bash
     git push origin your_name
@@ -132,7 +120,7 @@ Follow these steps to set up and run the project on your local machine and contr
 
 ### Create a Pull Request
 
-8. **Create a Pull Request:**
+5. **Create a Pull Request:**
 
    - Open the repository on GitHub.
    - Switch to the `your_name` branch.
@@ -142,13 +130,12 @@ Follow these steps to set up and run the project on your local machine and contr
 
 ### Updating Your Branch
 
-9. **If the master branch is updated:**
+6. **If the master branch is updated:**
 
     ```bash
     git pull origin master
     ```
-
-10. **Resolve any merge conflicts if necessary.**
+7. **Resolve any merge conflicts if necessary.**
 
 ## Contributing
 
