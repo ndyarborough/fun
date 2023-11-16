@@ -35,39 +35,117 @@ Follow these steps to set up and run the project on your local machine.
 
     ```env
     # .env
-    DATABASE_URI=mongodb://localhost:27017/meetup
-    SECRET_KEY=<your_secret_key>
+    DBHost=localhost
+    PORT=3000
     ```
 
-    Replace `<your_secret_key>` with a secret key for JWT.
+5. **Run your MongoDB server.**
+    ![Homepage](./mongo.png)
 
-5. **Change into the client directory:**
+    Make sure your MongoDB server is running locally.
+
+7. **Run Back End Server from your terminal.**
+    ```
+    nodemon app.js
+    ```
+8. **Open a new terminal**
+
+9. **Change into the root/client directory:**
 
     ```bash
-    cd client
+    cd Meetup/client
     ```
 
-6. **Install client dependencies:**
+10. **Install client dependencies:**
 
     ```bash
     npm install
     ```
 
-7. **Run your MongoDB server.**
-
-    Make sure your MongoDB server is running locally.
-
-8. **Run the project:**
+11. **Run the project:**
 
     ```bash
     npm run web
     ```
 
-9. **Your default web browser should open, and you can start using the Meetup application.**
+12. **Your default web browser should open, and you can start using the Meetup application.**
 
 ## Contributing
 
 If you'd like to contribute to the project, please follow the [contribution guidelines](CONTRIBUTING.md).
+
+# Branch Tips
+
+This is the Meetup project repository. It's designed to help users connect with others for events and activities.
+
+## Pull current master branch to your own branch
+
+Follow these steps to set up and run the project on your local machine and contribute to the development.
+
+### Switch to Existing Branch
+
+1. **Switch to the existing branch with your name:**
+
+    ```bash
+    git checkout your_name
+    ```
+
+### Install Dependencies
+
+2. **Install dependencies:**
+
+    ```bash
+    npm install
+    ```
+
+### Make Changes
+
+5. **Make changes to the code as needed.**
+
+### Commit Changes
+
+3. **Commit your changes:**
+
+    ```bash
+    git add .
+    git commit -m "Add a concise commit message describing your changes"
+    ```
+
+### Push Changes
+
+4. **Push changes to your branch:**
+
+    ```bash
+    git push origin your_name
+    ```
+
+### Create a Pull Request
+
+5. **Create a Pull Request:**
+
+   - Open the repository on GitHub.
+   - Switch to the `your_name` branch.
+   - Click on "Pull Request."
+   - Provide a clear title and description for your changes.
+   - Submit the pull request.
+
+### Updating Your Branch
+
+6. **If the master branch is updated:**
+
+    ```bash
+    git pull origin master
+    ```
+7. **Resolve any merge conflicts if necessary.**
+
+## Contributing
+
+If you'd like to contribute to the project, please follow the [contribution guidelines](CONTRIBUTING.md).
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
 
 ## License
 
