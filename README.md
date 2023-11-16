@@ -9,6 +9,7 @@ Follow these steps to set up and run the project on your local machine.
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/) installed on your machine.
+- [MongoDB](https://www.mongodb.com/try/download/community) installed on your machine.
 
 ### Installation
 
@@ -34,11 +35,11 @@ Follow these steps to set up and run the project on your local machine.
 
     ```env
     # .env
-    DATABASE_URI=<your_database_uri>
+    DATABASE_URI=mongodb://localhost:27017/meetup
     SECRET_KEY=<your_secret_key>
     ```
 
-    Replace `<your_database_uri>` with your MongoDB database URI, and `<your_secret_key>` with a secret key for JWT.
+    Replace `<your_secret_key>` with a secret key for JWT.
 
 5. **Change into the client directory:**
 
@@ -52,13 +53,17 @@ Follow these steps to set up and run the project on your local machine.
     npm install
     ```
 
-7. **Run the project:**
+7. **Run your MongoDB server.**
+
+    Make sure your MongoDB server is running locally.
+
+8. **Run the project:**
 
     ```bash
     npm run web
     ```
 
-8. **Your default web browser should open, and you can start using the Meetup application.**
+9. **Your default web browser should open, and you can start using the Meetup application.**
 
 ## Contributing
 
