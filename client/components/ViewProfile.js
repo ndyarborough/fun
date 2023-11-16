@@ -14,9 +14,15 @@ const ViewProfile = ({ route, navigation, updateUser, userInfo }) => {
   // Get Userinfo
   useEffect(() => { // Use Effects happen when the component mounts
     const fetchUserInfo = async () => {
-        const user = await userApi.getUserInfo(userInfo._id);
-        console.log(user)
-        updateUser(user);
+      console.log(userInfo)
+      const session = await AsyncStorage.getItem('@user')
+        if(session) {
+          console.log('you had a session')
+          console.log(JSON.parse(session))
+          updateUser(JSON.parse(session))  
+        } else {
+          navigation.navigate('Login')
+        }
     };
     // Add an event listener for the focus event
     const unsubscribe = navigation.addListener('focus', fetchUserInfo);

@@ -2,14 +2,14 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation
 
-const BottomNavbar = ({userInfo}) => {
+const BottomNavbar = () => {
   const navigation = useNavigation(); // Use useNavigation to get the navigation object
   return (
     <View style={styles.navbar}>
       {/* Column 1 */}
       <TouchableOpacity
         style={styles.column}
-        onPress={() => navigation.navigate('ViewProfile', {user: JSON.stringify(userInfo)})}
+        onPress={() => navigation.navigate('ViewProfile')}
       >
         <Image source={require('../assets/profile.png')} style={styles.icon} />
         <Text style={styles.text}>My Profile</Text>
@@ -18,7 +18,7 @@ const BottomNavbar = ({userInfo}) => {
       {/* Column 2 */}
       <TouchableOpacity
         style={styles.column}
-        onPress={() => navigation.navigate('BrowseEvents', {user: userInfo})}
+        onPress={() => navigation.navigate('BrowseEvents')}
       >
         <Image source={require('../assets/browse.png')} style={styles.icon} />
         <Text style={styles.text}>Browse Events</Text>

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -15,6 +15,7 @@ import InboxScreen from './components/InboxScreen.js';
 import Preferences from './components/Preferences';
 import Toast from 'react-native-toast-message';
 import BottomNavbar from './components/BottomNavbar';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -22,53 +23,61 @@ const Stack = createNativeStackNavigator();
 const App = () => {
   const [userInfo, setUserInfo] = useState(null);
 
-  const updateUser = (newUserInfo) => {
+  const updateUser = async (newUserInfo) => {
+    const storedUserString = await AsyncStorage.getItem('@user')
+    const storedUser = await JSON.parse(storedUserString)
+    if (storedUser != userInfo) {
+      const newUserCopy = await AsyncStorage.setItem('@user', JSON.stringify(newUserInfo))
+    }
+
     setUserInfo(newUserInfo);
   };
 
   return (
+
     <View style={styles.app}>
 
       <NavigationContainer>
         <View style={styles.mainContainer}>
           <Stack.Navigator>
-          <Stack.Screen name="SignIn">
-            {(props) => <SignIn {...props} updateUser={updateUser} />}
-          </Stack.Screen>
-          <Stack.Screen name="ViewProfile">
-            {(props) => <ViewProfile {...props} updateUser={updateUser} userInfo={userInfo} />}
-          </Stack.Screen>
-          <Stack.Screen name="EditProfile">
-            {(props) => <EditProfile {...props} updateUser={updateUser} userInfo={userInfo} />}
-          </Stack.Screen>
+            <Stack.Screen name="ViewProfile">
+              {(props) => <ViewProfile {...props} updateUser={updateUser} userInfo={userInfo} />}
+            </Stack.Screen>
+            <Stack.Screen name="SignIn">
+              {(props) => <SignIn {...props} updateUser={updateUser} />}
+            </Stack.Screen>
+
+            <Stack.Screen name="EditProfile">
+              {(props) => <EditProfile {...props} updateUser={updateUser} userInfo={userInfo} />}
+            </Stack.Screen>
             <Stack.Screen name="Login">
-            {(props) => <Login {...props} updateUser={updateUser} />}
-          </Stack.Screen>
-          <Stack.Screen name="InboxScreen">
-            {(props) => <InboxScreen {...props} updateUser={updateUser} userInfo={userInfo} />}
-          </Stack.Screen>
+              {(props) => <Login {...props} updateUser={updateUser} />}
+            </Stack.Screen>
+            <Stack.Screen name="InboxScreen">
+              {(props) => <InboxScreen {...props} updateUser={updateUser} userInfo={userInfo} />}
+            </Stack.Screen>
 
             <Stack.Screen name="Preferences">
-            {(props) => <Preferences {...props} updateUser={updateUser} userInfo={userInfo} />}
-          </Stack.Screen>
+              {(props) => <Preferences {...props} updateUser={updateUser} userInfo={userInfo} />}
+            </Stack.Screen>
 
-          <Stack.Screen name="Message">
-            {(props) => <Message {...props} senderId={userInfo._id} />}
-          </Stack.Screen>
+            <Stack.Screen name="Message">
+              {(props) => <Message {...props} senderId={userInfo._id} />}
+            </Stack.Screen>
 
             <Stack.Screen name="BrowseEvents">
-            {(props) => <BrowseEvents {...props} updateUser={updateUser} userInfo={userInfo} />}
-          </Stack.Screen>
-          <Stack.Screen name="EventDetails">
-            {(props) => <EventDetails {...props} updateUser={updateUser} userInfo={userInfo} />}
-          </Stack.Screen>
+              {(props) => <BrowseEvents {...props} updateUser={updateUser} userInfo={userInfo} />}
+            </Stack.Screen>
+            <Stack.Screen name="EventDetails">
+              {(props) => <EventDetails {...props} updateUser={updateUser} userInfo={userInfo} />}
+            </Stack.Screen>
             <Stack.Screen name="CreateEvent" component={CreateEvent} />
-            <Stack.Screen name="EditEvent" component={EditEvent}/>
+            <Stack.Screen name="EditEvent" component={EditEvent} />
             <Stack.Screen name="BottomNavbar" component={BottomNavbar} />
           </Stack.Navigator>
         </View>
         <View style={styles.navbar}>
-          <BottomNavbar user={userInfo}/>
+          <BottomNavbar user={userInfo} />
         </View>
       </NavigationContainer>
 
