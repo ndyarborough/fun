@@ -15,7 +15,7 @@ Follow these steps to set up and run the project on your local machine.
 
 ### Open a terminal window (you will need another one open later)
 
-    ![Terminal](./terminal.png)
+    ![Homepage](./terminal.png)
 
 #### 2 terminals running concurrently is essential to run this app
 
