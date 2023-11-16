@@ -9,7 +9,7 @@ const port = process.env.PORT;
 // Initialize Express app
 const app = express();
 // Connect to MongoDB
-mongoose.connect(`mongodb://${process.env.DBHOST}:27017/meetup`, {
+mongoose.connect(`mongodb://localhost:27017/meetup`, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 }).then(res => {
