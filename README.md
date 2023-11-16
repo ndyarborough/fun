@@ -81,7 +81,7 @@ This is the Meetup project repository. It's designed to help users connect with 
 
 Follow these steps to set up and run the project on your local machine and contribute to the development.
 
-### Creating your own Branch
+### How to manage your branch without affecting main
 
 1. **Clone the repository:**
 
