@@ -73,15 +73,13 @@ Follow these steps to set up and run the project on your local machine.
 
 If you'd like to contribute to the project, please follow the [contribution guidelines](CONTRIBUTING.md).
 
-# Meetup Project
+# Branch Tips
 
 This is the Meetup project repository. It's designed to help users connect with others for events and activities.
 
-## Getting Started
+## Pull current main branch to your own branch
 
 Follow these steps to set up and run the project on your local machine and contribute to the development.
-
-### How to manage your branch without affecting main
 
 1. **Clone the repository:**
 
