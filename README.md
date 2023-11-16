@@ -33,23 +33,34 @@ Follow these steps to set up and run the project on your local machine.
 
 4. **Create a `.env` file in the project root and add the following content:**
 
-    ```env
+    ```bash
+    touch .env
+   ```
+    ***Open the code in your IDE***
+   ```bash
+    code .
+   ```
+   ***Copy this into your ./.env file***
+   ```env
     # .env
     DBHost=localhost
     PORT=3000
     ```
 
 5. **Run your MongoDB server.**
+   
     ![Homepage](./mongo.png)
 
     Make sure your MongoDB server is running locally.
 
-7. **Run Back End Server from your terminal.**
+6. **Run Back End Server from your terminal.**
     ```
     nodemon app.js
     ```
-8. **Open a new terminal**
+7. **Open a new terminal**
 
+    ![Homepage](./terminal.png)
+   
 9. **Change into the root/client directory:**
 
     ```bash
