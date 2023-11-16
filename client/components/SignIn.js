@@ -2,18 +2,18 @@ import { React, useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, TextInput, Button, View, Pressable } from 'react-native';
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
+//import AsyncStorage from '@react-native-async-storage/async-storage';
 import userApi from '../api/userApi';
 
-const SignIn = ({ onPress, navigation }) => {
-
+const SignIn = ({ onPress, navigation, updateUser }) => {
+  
   // If user session is available, skip sign in and go to view profile
-  useEffect(() => {
-    AsyncStorage.getItem('@user')
-      .then(user => {
-        if (user) navigation.navigate('ViewProfile')
-      })
-  }, [])
+  //useEffect(() => {
+  //  AsyncStorage.getItem('@user')
+  //    .then(user => {
+   //     if (user) navigation.navigate('ViewProfile')
+  //    })
+  //}, [])
 
   // Form Data
   const [formData, setFormData] = useState({
@@ -73,8 +73,10 @@ const SignIn = ({ onPress, navigation }) => {
         .then(async (response) => {
           if (!(response.status == 400)) {
             console.log(response.user)
-            await AsyncStorage.setItem('@user', JSON.stringify(response.user));
-            navigation.navigate('ViewProfile', {user: JSON.stringify(response.user)})
+            //await AsyncStorage.setItem('@user', JSON.stringify(response.user));
+            updateUser(response.user)
+            navigation.navigate('ViewProfile')
+            
 
           } else {
             setDbErrors({ general: 'Username or email already in use' })

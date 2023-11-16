@@ -10,17 +10,21 @@ const ViewProfile = ({ route, navigation, updateUser, userInfo }) => {
   // Set State information for MyEvents and MyRsvps components
   const [myEvents, setMyEvents] = useState(null);
   const [myRsvps, setMyRsvps] = useState(null);
+
+  console.log(userInfo);
   
     // Get Userinfo
   useEffect(() => { // Use Effects happen when the component mounts
     const fetchUserInfo = async () => {
+      console.log("fetchUserInfo");
       if (route.params) {
         console.log('there were route params')
         console.log(route.params)
         updateUser(JSON.parse(route.params.user));
       } else {
-        console.log('no route params')
-        const user = await AsyncStorage.getItem('@user');
+        console.log('fetchUserInfo');
+        console.log(userInfo);
+        const user = await userApi.getUserInfo(userInfo._id);
         updateUser(JSON.parse(user));
       }
     };
@@ -78,7 +82,7 @@ const ViewProfile = ({ route, navigation, updateUser, userInfo }) => {
   };
   
   const handlePreferences = () => {
-    navigation.navigate('Preferences', {userInfo});
+    navigation.navigate('Preferences');
   };
 
   // HTML for ViewProfile component

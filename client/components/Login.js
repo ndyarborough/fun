@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-nativ
 import userApi from '../api/userApi';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Login = ({ navigation }) => {
+const Login = ({ navigation, updateUser }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [validationError, setValidationError] = useState('');
@@ -14,10 +14,11 @@ const Login = ({ navigation }) => {
                 if (response.success == true) {
                     console.log('Login successful:', response)
                     const user = response.user
-                    AsyncStorage.setItem('@user', JSON.stringify(user))
-                        .then(
-                            navigation.navigate('ViewProfile')
-                        )
+                    updateUser(user);
+                    //AsyncStorage.setItem('@user', JSON.stringify(user))
+                    //    .then(
+                    navigation.navigate('ViewProfile')
+                    //    )
                 } else {
                     console.log('Login failed:', response)
                     setValidationError('Username or password is incorrect')

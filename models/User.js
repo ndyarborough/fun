@@ -29,9 +29,10 @@ const userSchema = new Schema({
   picture: {
     type: String,
   },
-  preferences: [
-    {type: Schema.Types.ObjectId, ref: 'Preferences'}
-  ],
+  preferences: { 
+    type: Schema.Types.ObjectId,
+    ref: 'Preferences',
+  },
   messages: [
     {type: Schema.Types.ObjectId, ref: 'Message'}
   ]
