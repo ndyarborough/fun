@@ -39,7 +39,7 @@ Follow these steps to set up and run the project on your local machine.
     PORT=3000
     ```
 
-    Replace `<your_secret_key>` with a secret key for JWT.
+    Replace db host with 0.0.00 if that doesn't work.
 
 5. **Change into the client directory:**
 
