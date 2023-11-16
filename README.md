@@ -13,6 +13,12 @@ Follow these steps to set up and run the project on your local machine.
 
 ### Installation
 
+### Open a terminal window (you will need another one open later)
+
+    ![Homepage](./terminal.png)
+
+#### 2 terminals running concurrently is essential to run this app
+
 1. **Clone the repository:**
 
     ```bash
