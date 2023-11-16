@@ -39,31 +39,35 @@ Follow these steps to set up and run the project on your local machine.
     PORT=3000
     ```
 
-    Replace db host with 0.0.0.0 if that doesn't work.
-
 5. **Run your MongoDB server.**
 
     Make sure your MongoDB server is running locally.
 
-6. **Change into the client directory:**
+6. **Run Back End Server from your terminal.**
+    ```
+    nodemon app.js
+    ```
+7. **Open anew terminal**
+
+9. **Change into the root/client directory:**
 
     ```bash
-    cd client
+    cd Meetup/client
     ```
 
-7. **Install client dependencies:**
+10. **Install client dependencies:**
 
     ```bash
     npm install
     ```
 
-8. **Run the project:**
+11. **Run the project:**
 
     ```bash
     npm run web
     ```
 
-9. **Your default web browser should open, and you can start using the Meetup application.**
+12. **Your default web browser should open, and you can start using the Meetup application.**
 
 ## Contributing
 
