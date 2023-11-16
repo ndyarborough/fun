@@ -40,9 +40,7 @@ Follow these steps to set up and run the project on your local machine.
     ```
 
 5. **Run your MongoDB server.**
-
-   ![image](https://github.com/Ryanslep/Meetup/assets/26638981/4dc6266e-27ab-41bd-8ae5-e1094258a787)
-
+    ![Homepage](./mongo.png)
 
     Make sure your MongoDB server is running locally.
 
