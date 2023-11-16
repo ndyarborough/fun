@@ -55,13 +55,23 @@ const messageApi = {
         throw new Error('Failed to fetch threads');
       }
       const threads = await response.json();
-      console.log(threads); // Log the threads to check their structure
-      return threads;
+  
+      // Log the threads to check their structure
+      console.log(threads);
+  
+      // Adapt the structure of the threads as needed in your front-end code
+      const adaptedThreads = threads.map((thread) => ({
+        ...thread,
+        receiverInfo: thread.receiverInfo, // Keep receiverInfo as is
+        senderInfo: thread.senderInfo, // Add senderInfo to each thread
+      }));
+  
+      return adaptedThreads;
     } catch (error) {
       console.error('Error fetching threads:', error);
       throw error;
     }
-  },
+  },  
 };
 
 export default messageApi;

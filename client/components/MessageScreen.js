@@ -23,6 +23,7 @@ const MessageScreen = ({ route, senderId }) => {
   useEffect(() => {
     const fetchThreadHistory = async () => {
       try {
+        console.log(senderId, receiverId)
         const { threadHistory, receiverInfo } = await messageApi.getThreadHistory(senderId, receiverId);
         setChat(threadHistory);
         setReceiverInfo(receiverInfo);

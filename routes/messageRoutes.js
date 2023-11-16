@@ -103,7 +103,18 @@ router.get('/threads/:userId', async (req, res) => {
         },
       },
       {
+        $lookup: {
+          from: 'users', // Name of the users collection
+          localField: 'sender',
+          foreignField: '_id',
+          as: 'senderInfo',
+        },
+      },
+      {
         $unwind: '$receiverInfo',
+      },
+      {
+        $unwind: '$senderInfo',
       },
       {
         $sort: { timestamp: -1 },
@@ -116,6 +127,7 @@ router.get('/threads/:userId', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 
 
 module.exports = router;
