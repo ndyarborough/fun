@@ -65,7 +65,7 @@ Follow these steps to set up and run the project on your local machine.
     ```
     nodemon app.js
     ```
-7. **Keep server running and start a new terminal**
+7. **Start a new Terminal window while leaving the first one running**
 
     ![Homepage](./terminal.png)
    
@@ -88,6 +88,11 @@ Follow these steps to set up and run the project on your local machine.
     ```
 
 12. **Your default web browser should open, and you can start using the Meetup application.**
+
+    ***Make your browser window narrow like this to simulate mobile***
+
+    ![image](https://github.com/Ryanslep/Meetup/assets/26638981/d38add14-6806-4f76-93b8-bdac210c06bb)
+
 
 ## Contributing
 
