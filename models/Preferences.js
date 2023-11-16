@@ -12,8 +12,10 @@ const preferencesSchema = new mongoose.Schema({
     default: true, // You can set a default value
   },
 
-  blockedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-    default: [],
+  blockedUsers: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  }],
 });
 
 const Preferences = mongoose.model('Preferences', preferencesSchema);

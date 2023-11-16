@@ -168,10 +168,6 @@ router.post('/login', async (req, res) => {
   }
 });
 
-router.post('/sendMessage/', async (req, res) => {
-  console.log('Sending Message')
-});
-
 router.get('/myEvents/:userId', async (req, res) => {
   const userId = req.params.userId;
 
@@ -304,30 +300,6 @@ router.post('/block', async (req, res) => {
       const newPreferences = new Preferences();
       await newPreferences.save();
 
-  try {
-    // Find the user making the request
-    const user = await User.findById(userId);
-
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-
-    // Find the preferences by ID (assuming it's stored in the user's preferences field)
-    const preferences = await Preferences.findById(user.preferences);
-
-    if (!preferences) {
-      // Create a new Preferences object if it doesn't exist
-      const newPreferences = new Preferences();
-      await newPreferences.save();
-
-      user.preferences = newPreferences._id;
-    }
-
-    // Map through the blockedUsers array and check if blockedUserId is present
-    const isAlreadyBlocked = preferences.blockedUsers.some(
-      (blockedUser) => blockedUser.equals(blockedUserId)
-    );
-
       user.preferences = newPreferences._id;
     }
 
@@ -340,7 +312,6 @@ router.post('/block', async (req, res) => {
     if (isAlreadyBlocked) {
       return res.status(400).json({ error: 'User already blocked' });
     }
-
 
     // Add the blocked user to the blocklist
     preferences.blockedUsers.push(blockedUserId);
@@ -357,53 +328,5 @@ router.post('/block', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
-/*router.post('/block/:username/:blockerId', async (req, res) => {
-  try {
-    const username = req.params.username;
-
-    // Find the user to block by username
-    const userToBlock = await User.findOne({ username });
-
-    if (!userToBlock) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    // Check if the logged-in user already has preferences
-    const loggedInUserId = req.params.blockerId; // Replace with your actual user identification logic
-    const loggedInUser = await User.findById(loggedInUserId);
-
-    if (!loggedInUser) {
-      return res.status(404).json({ message: 'Logged-in user not found' });
-    }
-
-    let preferences = loggedInUser.preferences;
-  
-    console.log(preferences[0])
-
-    if (!preferences) {
-      // If not, create new preferences
-      preferences = new Preferences();
-      await preferences.save();
-      loggedInUser.preferences = preferences._id;
-      await loggedInUser.save();
-    }
-
-    preferences.blockedUsers = preferences.blockedUsers || [];
-
-    if (Array.isArray(preferences.blockedUsers)) {
-      preferences.blockedUsers.push(userToBlock._id);
-      await preferences.save();
-    } else {
-      console.error('Blocked users array is not properly initialized.');
-      res.status(500).json({ message: 'Internal server error' });
-    }
-
-    res.status(200).json({ message: 'User blocked successfully' });
-  } catch (error) {
-    console.error('Error blocking user:', error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-});*/
 
 module.exports = router;

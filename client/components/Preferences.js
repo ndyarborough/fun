@@ -3,7 +3,7 @@ import { View, Text, TextInput, StyleSheet, Switch, Pressable, FlatList, Image }
 import Toast from 'react-native-toast-message';
 import userApi from '../api/userApi';
 
-const Preferences = ({  navigation, userInfo, updateUser }) => {
+const Preferences = ({ navigation, userInfo, updateUser }) => {
   const [preferences, setPreferences] = useState(null);
   const [searchQuery, setSearchQuery] = useState(null);
   const [blockUser, setBlockUser] = useState(null);
@@ -22,16 +22,16 @@ const Preferences = ({  navigation, userInfo, updateUser }) => {
           receiveNotifications: notificationPreference,
           rsvpVisibility: rsvpVisibilityPreference,
           blockedUsers: blockedUserPreference,
-          
+
         }));
-        
+
       } catch (error) {
         console.error('Error fetching user preferences:', error);
       }
     };
 
     fetchUserPreferences()
-    
+
   }, []);
 
   const handleToggleNotifications = () => {
@@ -51,10 +51,10 @@ const Preferences = ({  navigation, userInfo, updateUser }) => {
 
   const handleBlockedUser = async () => {
     try {
-      
+
       const blockUserInfo = await userApi.getUserByUsername(searchQuery);
       console.log(blockUserInfo);
-      
+
       // Check if the user to block is found
       if (!blockUserInfo) {
         Toast.show({
@@ -94,12 +94,52 @@ const Preferences = ({  navigation, userInfo, updateUser }) => {
     }
   };
 
+  const handleUnblockUser = async (blockedUserId) => {
+    try {
+      // Remove the blocked user from the preferences
+      const updatedBlockedUsers = preferences.blockedUsers.filter(
+        (user) => user._id !== blockedUserId
+      );
   
+      // Make an API request to update the user with the modified preferences
+      await userApi.savePreferences(userInfo._id, {
+        blockedUsers: updatedBlockedUsers,
+      });
+  
+      // Update the state with the modified blockedUsers array
+      setPreferences((prevPreferences) => ({
+        ...prevPreferences,
+        blockedUsers: updatedBlockedUsers,
+      }));
+  
+      // Display a success toast message
+      Toast.show({
+        type: 'success',
+        text1: 'User unblocked successfully',
+        visibilityTime: 3000,
+        autoHide: true,
+        topOffset: 30,
+      });
+    } catch (error) {
+      console.error('Error unblocking user:', error);
+  
+      // Display an error toast message
+      Toast.show({
+        type: 'error',
+        text1: 'Error unblocking user',
+        visibilityTime: 3000,
+        autoHide: true,
+        topOffset: 30,
+      });
+    }
+  };
+
+
 
 
   const handleSavePreferences = async () => {
     try {
-      
+
       // Make API request to save preferences
       await userApi.savePreferences(userInfo._id, preferences);
 
@@ -176,6 +216,7 @@ const Preferences = ({  navigation, userInfo, updateUser }) => {
                 </View>
               )}
             />
+
           </View>
 
           {/* Save Preferences Button */}
@@ -240,11 +281,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderRadius: 5,
   },
-  
+
   username: {
     fontSize: 16,
   },
-  
+
   deleteIcon: {
     width: 20, // Set the width of the delete icon
     height: 20, // Set the height of the delete icon

@@ -11,6 +11,7 @@ import CreateEvent from './components/CreateEvent';
 import EditEvent from './components/EditEvent';
 import Login from './components/Login';
 import Message from './components/MessageScreen.js';
+import InboxScreen from './components/InboxScreen.js';
 import Preferences from './components/Preferences';
 import Toast from 'react-native-toast-message';
 import BottomNavbar from './components/BottomNavbar';
@@ -39,6 +40,9 @@ const App = () => {
           </Stack.Screen>
             <Stack.Screen name="Login">
             {(props) => <Login {...props} updateUser={updateUser} />}
+          </Stack.Screen>
+          <Stack.Screen name="InboxScreen">
+            {(props) => <InboxScreen {...props} updateUser={updateUser} userInfo={userInfo} />}
           </Stack.Screen>
 
             <Stack.Screen name="Preferences">

@@ -1,95 +1,133 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import messageApi from '../api/messageApi';
 
 const MessageScreen = ({ route, senderId }) => {
-    const { userId, username } = route.params;
-    const [message, setMessage] = useState('');
-    const [chat, setChat] = useState([]);
-    const [loading, setLoading] = useState(true);
+  const { receiverId } = route.params;
+  const [message, setMessage] = useState('');
+  const [receiverInfo, setReceiverInfo] = useState(null);
+  const [chat, setChat] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const scrollViewRef = useRef();
 
-    const formatTimestamp = (timestamp) => {
-        const date = new Date(timestamp);
-        const hours = date.getHours();
-        const minutes = date.getMinutes();
-        const ampm = hours >= 12 ? 'PM' : 'AM';
-        const formattedHours = hours % 12 || 12; // Convert to 12-hour format
-        return `${formattedHours}:${minutes} ${ampm}`;
+  const formatTimestamp = (timestamp) => {
+    try {
+      const date = new Date(Date.parse(timestamp));
+      return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+    } catch (error) {
+      console.error('Error formatting timestamp:', error);
+      return 'Invalid Date';
+    }
+  };
+
+  useEffect(() => {
+    const fetchThreadHistory = async () => {
+      try {
+        const { threadHistory, receiverInfo } = await messageApi.getThreadHistory(senderId, receiverId);
+        setChat(threadHistory);
+        setReceiverInfo(receiverInfo);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching thread history:', error);
+        setLoading(false);
+      }
     };
 
-    useEffect(() => {
-        const fetchThreadHistory = async () => {
-            try {
-                const response = await messageApi.getThreadHistory(senderId, userId);
-                setChat(response);
-                setLoading(false);
-            } catch (error) {
-                console.error('Error fetching thread history:', error);
-                setLoading(false);
-            }
-        };
+    fetchThreadHistory();
+  }, [senderId, receiverId]);
 
-        fetchThreadHistory();
-    }, [userId]);
+  useEffect(() => {
+    // Scroll to the bottom when the component mounts or when chat changes
+    scrollViewRef.current?.scrollToEnd({ animated: true });
+  }, [chat]);
 
-    const isSender = (messageUserId) => messageUserId === senderId;
+  const isSender = (messageUserId) => messageUserId === senderId;
 
-    const sendMessage = async () => {
-        if (message.trim() !== '') {
-            try {
-                await messageApi.sendMessage(senderId, userId, message);
-                setChat([...chat, { userId, message }]);
-                setMessage('');
-            } catch (error) {
-                console.error('Error sending message:', error);
-            }
+  const sendMessage = async () => {
+    if (message.trim() !== '') {
+      try {
+        const result = await messageApi.sendMessage(senderId, receiverId, message);
+
+        if (result && result.message && result.message.timestamp && result.receiverInfo) {
+          setChat([
+            ...chat,
+            { _id: result.message._id, sender: senderId, content: message, receiverInfo: result.receiverInfo, timestamp: result.message.timestamp },
+          ]);
+          setMessage('');
+        } else {
+          console.error('Invalid response format');
         }
-    };
+      } catch (error) {
+        console.error('Error sending message:', error);
+      }
+    }
+  };
 
-    return (
-        <View style={styles.container}>
-            {loading ? (
-                <Text>Loading messages...</Text>
-            ) : (
-                <ScrollView style={styles.chatContainer}>
-                    {chat.map((item, index) => (
-                        <View
-                            key={index}
-                            style={[
-                                styles.messageContainer,
-                                isSender(item.sender) ? styles.senderMessage : styles.receiverMessage,
-                            ]}
-                        >
-                            <Text style={styles.messageText}>{item.content}</Text>
-                            <Text style={styles.timestampText}>{formatTimestamp(item.timestamp)}</Text>
-                        </View>
-                    ))}
-                </ScrollView>
-
-            )}
-
-            <View style={styles.inputContainer}>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Type your message..."
-                    value={message}
-                    onChangeText={(text) => setMessage(text)}
-                />
-                <TouchableOpacity style={styles.sendButton} onPress={sendMessage}>
-                    <Text style={styles.sendButtonText}>Send</Text>
-                </TouchableOpacity>
-            </View>
+  return (
+    <View style={styles.container}>
+      {/* Display receiver's name at the top */}
+      {receiverInfo && (
+        <View style={styles.header}>
+          <Text>{receiverInfo.fullName}</Text>
         </View>
-    );
+      )}
+
+      {loading ? (
+        <Text>Loading messages...</Text>
+      ) : (
+        <ScrollView ref={scrollViewRef} style={styles.chatContainer}>
+          {chat.map((item, index) => (
+            <View
+              key={index}
+              style={[
+                styles.messageContainer,
+                isSender(item.sender) ? styles.senderMessage : styles.receiverMessage,
+              ]}
+            >
+              <View style={styles.messageContent}>
+                <Text style={styles.messageText(isSender(item.sender))}>{item.content}</Text>
+                {isSender(item.sender) || !item.receiverInfo ? null : (
+                  <Text style={styles.fullNameText}>{item.receiverInfo.fullName}</Text>
+                )}
+              </View>
+              <Text style={styles.timestampText}>{formatTimestamp(item.timestamp)}</Text>
+            </View>
+          ))}
+        </ScrollView>
+      )}
+
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Type your message..."
+          value={message}
+          onChangeText={(text) => setMessage(text)}
+        />
+        <TouchableOpacity style={styles.sendButton} onPress={sendMessage}>
+          <Text style={styles.sendButtonText}>Send</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'space-between',
-        padding: 10,
         backgroundColor: '#fff',
     },
+
+    header: {
+        borderWidth: 1,
+        borderColor: '#ddd', // Add your desired border color
+        padding: 10,
+    },
+
+    receiverName: {
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+
     chatContainer: {
         flex: 1,
         marginBottom: 10,
@@ -100,8 +138,24 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         flexDirection: 'row',
         justifyContent: 'space-between',
-        width: '60%',
+        alignItems: 'center',
+        width: '80%', // Adjust the width of the message container
     },
+    chatContainer: {
+        flex: 1,
+        marginBottom: 10,
+    },
+    messageContent: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    fullNameText: {
+        fontSize: 12,
+        color: '#666',
+        marginLeft: 5, // Adjust the margin as needed
+    },
+
     senderText: {
         color: '#fff', // Text color for sender
     },
@@ -113,10 +167,10 @@ const styles = StyleSheet.create({
         backgroundColor: '#e0e0e0', // Default color for receiver
         alignSelf: 'flex-start',
     },
-    messageText: (isSender, senderStyle) => ({
+    messageText: (isSender) => ({
         color: isSender ? '#fff' : '#000', // Text color for sender and receiver
         alignSelf: isSender ? 'flex-end' : 'flex-start', // Align text based on sender or receiver
-        ...senderStyle, // Additional style for sender
+        width: '80%', // Adjust the width of the text
     }),
     timestampText: {
         color: '#333', // Text color for timestamp

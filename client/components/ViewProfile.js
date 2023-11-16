@@ -78,7 +78,7 @@ const ViewProfile = ({ route, navigation, updateUser, userInfo }) => {
 
   const handleMessagesPress = () => {
     // Navigate to the 'Messages' screen
-    // navigation.navigate('Messages');
+    navigation.navigate('Messages');
   };
 
   const deleteUserSession = () => {
@@ -109,6 +109,10 @@ const ViewProfile = ({ route, navigation, updateUser, userInfo }) => {
 
           <Pressable style={styles.button} onPress={() => handlePreferences()}>
             <Text style={styles.buttonText}>Preferences</Text>
+          </Pressable>
+
+          <Pressable style={styles.button} onPress={() => navigation.navigate('InboxScreen')}>
+            <Text style={styles.buttonText}>Inbox</Text>
           </Pressable>
 
           {/* Pressable to navigate to 'Messages' screen */}
