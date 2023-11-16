@@ -77,7 +77,7 @@ If you'd like to contribute to the project, please follow the [contribution guid
 
 This is the Meetup project repository. It's designed to help users connect with others for events and activities.
 
-## Pull current main branch to your own branch
+## Pull current master branch to your own branch
 
 Follow these steps to set up and run the project on your local machine and contribute to the development.
 
@@ -142,10 +142,10 @@ Follow these steps to set up and run the project on your local machine and contr
 
 ### Updating Your Branch
 
-9. **If the main branch is updated:**
+9. **If the master branch is updated:**
 
     ```bash
-    git pull origin main
+    git pull origin master
     ```
 
 10. **Resolve any merge conflicts if necessary.**
