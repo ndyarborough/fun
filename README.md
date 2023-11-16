@@ -35,8 +35,8 @@ Follow these steps to set up and run the project on your local machine.
 
     ```env
     # .env
-    DATABASE_URI=mongodb://localhost:27017/meetup
-    SECRET_KEY=<your_secret_key>
+    DBHost=localhost
+    PORT=3000
     ```
 
     Replace `<your_secret_key>` with a secret key for JWT.
