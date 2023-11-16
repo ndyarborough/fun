@@ -65,6 +65,7 @@ const MessageScreen = ({ route, senderId }) => {
                         </View>
                     ))}
                 </ScrollView>
+
             )}
 
             <View style={styles.inputContainer}>

@@ -1,14 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Modal } from 'react-native';
 import eventApi from '../api/eventApi';
+import userApi from '../api/userApi';
+import BlockingModal from './BlockingModal';
 
-const EventDetails = ({ route, navigation }) => {
+const EventDetails = ({ route, navigation, userInfo }) => {
   const { eventId, userId } = route.params;
   const [event, setEventData] = useState(null);
   const [rsvps, setRsvps] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [useInfo, setUserInfo] = useState(true);
+  const [blockedUser, setBlockedUser] = useState(null);
+  const [blockingModalVisible, setBlockingModalVisible] = useState(false);
+  const [blockingInProgress, setBlockingInProgress] = useState(false);
 
   useEffect(() => {
+    console.log(userInfo)
+    setUserInfo(userInfo)
     const fetchData = async () => {
       try {
         // Fetch event details
@@ -28,6 +36,36 @@ const EventDetails = ({ route, navigation }) => {
 
     fetchData();
   }, [eventId]);
+
+  const handleBlockUser = (user) => {
+    // Set the user to be blocked in the state
+    setBlockedUser(user);
+    // Show the blocking confirmation modal
+    setBlockingModalVisible(true);
+  };
+
+  const handleBlockConfirmation = async () => {
+    if (blockingInProgress) {
+      return; // Do nothing if the blocking action is already in progress
+    }
+  
+    try {
+      setBlockingInProgress(true);
+  
+      console.log(`Loggedin user: ${userInfo.username} is attempting to Block user: ${blockedUser.username}`);
+      const blocked = await userApi.handleBlockConfirmation(userInfo._id, blockedUser._id);
+      console.log(blocked);
+  
+      // Close the blocking confirmation modal
+      setBlockingModalVisible(false);
+    } catch (error) {
+      console.error('Error blocking user:', error);
+      // Handle error, show user-friendly message, etc.
+    } finally {
+      setBlockingInProgress(false);
+    }
+  };
+
 
   return (
     <View style={styles.container}>
@@ -82,29 +120,45 @@ const EventDetails = ({ route, navigation }) => {
             <FlatList
               data={rsvps}
               keyExtractor={(item) => `${item.userId}-${item.email}`}
-              renderItem={({ item }) => (
-                <View style={styles.rsvpRow}>
-                  <Text style={styles.rsvpName}>{item.username}</Text>
-                  <View style={styles.rsvpIcons}>
-                    {/* Icon for messaging */}
-                    <TouchableOpacity onPress={() => {
-                      console.log(`Sending message to ${item.username}, id: ${item._id}`)
-                      navigation.navigate('Message', {username: item.username, userId: item._id} )
-                    }}>
-                      <Image source={require('../assets/message.png')} style={styles.icon} />
-                    </TouchableOpacity>
+              renderItem={({ item }) => {
+                return (
+                  <View style={styles.rsvpRow}>
+                    <Text style={styles.rsvpName}>{item.username}</Text>
+                    <View style={styles.rsvpIcons}>
+                      {/* Icon for messaging */}
+                      <TouchableOpacity onPress={() => {
+                        console.log(`Sending message to ${item.username}, id: ${item._id}`);
+                        navigation.navigate('Message', { username: item.username, userId: item._id });
+                      }}>
+                        <Image source={require('../assets/message.png')} style={styles.icon} />
+                      </TouchableOpacity>
 
-                    {/* Icon for adding as a friend */}
-                    <TouchableOpacity onPress={() => console.log('adding friend')}>
-                      <Image source={require('../assets/addFriend.png')} style={styles.icon} />
-                    </TouchableOpacity>
+                      {/* Icon for adding as a friend */}
+                      <TouchableOpacity onPress={() => console.log('adding friend')}>
+                        <Image source={require('../assets/addFriend.png')} style={styles.icon} />
+                      </TouchableOpacity>
+
+                      {/* Icon for blocking a user */}
+                      <TouchableOpacity onPress={() => handleBlockUser(item)}>
+                        <Image source={require('../assets/blockUser.png')} style={styles.icon} />
+                      </TouchableOpacity>
+                    </View>
                   </View>
-                </View>
-              )}
+                );
+              }}
             />
           </View>
 
         </View>
+      )}
+     {/* Render BlockingModal */}
+     {blockingModalVisible && (
+        <BlockingModal
+          blockingModalVisible={blockingModalVisible}
+          setBlockingModalVisible={setBlockingModalVisible}
+          blockedUser={blockedUser}
+          handleBlockConfirmation={handleBlockConfirmation}
+        />
       )}
     </View>
   );

@@ -78,7 +78,7 @@ const ViewProfile = ({ route, navigation, updateUser, userInfo }) => {
 
   const handleMessagesPress = () => {
     // Navigate to the 'Messages' screen
-    navigation.navigate('Messages');
+    // navigation.navigate('Messages');
   };
 
   const deleteUserSession = () => {

@@ -304,6 +304,32 @@ router.post('/block', async (req, res) => {
       const newPreferences = new Preferences();
       await newPreferences.save();
 
+  try {
+    // Find the user making the request
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Find the preferences by ID (assuming it's stored in the user's preferences field)
+    const preferences = await Preferences.findById(user.preferences);
+
+    if (!preferences) {
+      // Create a new Preferences object if it doesn't exist
+      const newPreferences = new Preferences();
+      await newPreferences.save();
+
+      user.preferences = newPreferences._id;
+    }
+
+    // Map through the blockedUsers array and check if blockedUserId is present
+    const isAlreadyBlocked = preferences.blockedUsers.some(
+      (blockedUser) => blockedUser.equals(blockedUserId)
+    );
+
+=======
+
       user.preferences = newPreferences._id;
     }
 
@@ -316,6 +342,7 @@ router.post('/block', async (req, res) => {
     if (isAlreadyBlocked) {
       return res.status(400).json({ error: 'User already blocked' });
     }
+
 
     // Add the blocked user to the blocklist
     preferences.blockedUsers.push(blockedUserId);
@@ -332,8 +359,6 @@ router.post('/block', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
-
 
 /*router.post('/block/:username/:blockerId', async (req, res) => {
   try {
