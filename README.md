@@ -41,13 +41,16 @@ Follow these steps to set up and run the project on your local machine.
 
 5. **Run your MongoDB server.**
 
+   ![image](https://github.com/Ryanslep/Meetup/assets/26638981/4dc6266e-27ab-41bd-8ae5-e1094258a787)
+
+
     Make sure your MongoDB server is running locally.
 
-6. **Run Back End Server from your terminal.**
+7. **Run Back End Server from your terminal.**
     ```
     nodemon app.js
     ```
-7. **Open anew terminal**
+8. **Open a new terminal**
 
 9. **Change into the root/client directory:**
 
