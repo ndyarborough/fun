@@ -328,8 +328,6 @@ router.post('/block', async (req, res) => {
       (blockedUser) => blockedUser.equals(blockedUserId)
     );
 
-=======
-
       user.preferences = newPreferences._id;
     }
 
