@@ -6,7 +6,7 @@ import eventApi from '../api/eventApi';
 
 const MyRsvps = ({ navigation, myRsvps, userId, setRsvps }) => {
   const [pressedEvent, setPressedEvent] = useState(null);
-
+  
   useEffect(() => {
     const fetchUserRsvps = async () => {
       try {

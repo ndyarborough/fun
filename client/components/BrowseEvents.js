@@ -117,9 +117,9 @@ const BrowseEvents = ({ route, navigation, userInfo, setUserInfo }) => {
     setEndDate(oneMonthFromToday);
     eventApi.getEvents()
       .then(events => {
+        console.log(events[0].host.fullName)
         setEvents(events);
         setOriginalEvents(events);
-        console.log(events);
       })
       .catch(error => {
         console.error('Error fetching events:', error);

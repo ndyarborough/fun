@@ -91,7 +91,7 @@ router.delete('/delete/:eventId/:userId', async (req, res) => {
 //Route for fetching event data
 router.get('/fetch', async (req, res) => {
     try{
-        const event = await Event.find();
+        const event = await Event.find().populate('host').populate('rsvps');
         res.json(event);
     }catch (error){
         console.error('Error fetching events:', error);
@@ -102,15 +102,18 @@ router.get('/fetch', async (req, res) => {
 
 // Fetch user event by Id
 router.get('/fetch/:eventId', async (req, res) => {
-  console.log('fetch event')
-    try{
-        const eventId = req.params.eventId;
-        const event = await Event.findById(eventId).populate('rsvps');
-        res.json(event);
-    }catch (error){
-        console.error('Error fetching events:', error);
-        res.status(500).json({message: 'Error fetching event data'});
-    }
+  console.log('fetch event');
+  try {
+    const eventId = req.params.eventId;
+    const event = await Event.findById(eventId)
+      .populate('host') // Populate the host field
+      .populate('rsvps');
+
+    res.json(event);
+  } catch (error) {
+    console.error('Error fetching events:', error);
+    res.status(500).json({ message: 'Error fetching event data' });
+  }
 });
 
 //Route for deleting event

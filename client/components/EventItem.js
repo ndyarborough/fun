@@ -28,7 +28,7 @@ const EventItem = ({ event, handleRSVP, handleViewDetails, handleReportPost, use
         <Text>Date: {new Date(event.date).toLocaleDateString()}</Text>
         <Text>Address: {event.address}</Text>
         <Text>Capacity: {event.capacity}</Text>
-        <Text>Host: {eventHost}</Text>
+        <Text>Host: {event.host.username}</Text>
       </View>
 
       {/* Right side (20%) */}
