@@ -43,7 +43,7 @@ Follow these steps to set up and run the project on your local machine.
    ***Copy this into your ./.env file***
    ```env
     # .env
-    DBHost=localhost
+    DBHOST=localhost
     PORT=3000
     ```
 
