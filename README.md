@@ -13,7 +13,7 @@ Follow these steps to set up and run the project on your local machine.
 
 ### Installation
 
-### Open a terminal window (you will need another one open later)
+### Open a terminal window (you will need 2nd one open later)
 
 1. **Open terminal**
 
@@ -65,7 +65,7 @@ Follow these steps to set up and run the project on your local machine.
     ```
     nodemon app.js
     ```
-7. **Open a new terminal**
+7. **Keep server running and start a new terminal**
 
     ![Homepage](./terminal.png)
    
