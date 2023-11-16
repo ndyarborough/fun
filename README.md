@@ -41,21 +41,21 @@ Follow these steps to set up and run the project on your local machine.
 
     Replace db host with 0.0.0.0 if that doesn't work.
 
-5. **Change into the client directory:**
+5. **Run your MongoDB server.**
+
+    Make sure your MongoDB server is running locally.
+
+6. **Change into the client directory:**
 
     ```bash
     cd client
     ```
 
-6. **Install client dependencies:**
+7. **Install client dependencies:**
 
     ```bash
     npm install
     ```
-
-7. **Run your MongoDB server.**
-
-    Make sure your MongoDB server is running locally.
 
 8. **Run the project:**
 
