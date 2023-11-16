@@ -52,33 +52,60 @@ const userApi = {
     console.log(myEvents)
     return myEvents;
   },
-  getMyRsvps: async(userId) => {
+  getMyRsvps: async (userId) => {
     const response = await fetch(`${apiBaseUrl}/user/myRsvps/${userId}`);
     const myRsvps = await response.json();
     return myRsvps;
   },
   getPreferences: async (userId) => {
-      const response = await fetch(`${apiBaseUrl}/user/preferences/${userId}`);
-      const myPreferences = await response.json();
-      return myPreferences;
+    const response = await fetch(`${apiBaseUrl}/user/preferences/${userId}`);
+    const myPreferences = await response.json();
+    return myPreferences;
   },
   savePreferences: async (userId, preferences) => {
     const response = await fetch(`${apiBaseUrl}/user/preferences/${userId}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(preferences),
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(preferences),
     });
 
     if (response.ok) {
-        const result = await response.json();
-        return result;
+      const result = await response.json();
+      return result;
     } else {
-        const error = await response.json();
-        throw new Error(error.message);
+      const error = await response.json();
+      throw new Error(error.message);
     }
-},
+  },
+  handleBlockConfirmation: async (userId, blockedUserId) => {
+    try {
+      console.log(`Request received to block user: ${blockedUserId} by user: ${userId}`);
+
+      const response = await fetch(`${apiBaseUrl}/user/block`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: userId,
+          blockedUserId: blockedUserId,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        return data; // Return the data if the request was successful
+      } else {
+        throw new Error(data.error || 'Error blocking user'); // Throw an error if the request was not successful
+      }
+    } catch (error) {
+      console.error('Error in handleBlockConfirmation:', error);
+      throw new Error('Error blocking user');
+    }
+  },
 }
 
 export default userApi;

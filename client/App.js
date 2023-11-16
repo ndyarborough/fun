@@ -47,7 +47,9 @@ const App = () => {
             <Stack.Screen name="BrowseEvents">
             {(props) => <BrowseEvents {...props} updateUser={updateUser} userInfo={userInfo} />}
           </Stack.Screen>
-            <Stack.Screen name="EventDetails" component={EventDetails} />
+          <Stack.Screen name="EventDetails">
+            {(props) => <EventDetails {...props} updateUser={updateUser} userInfo={userInfo} />}
+          </Stack.Screen>
             <Stack.Screen name="CreateEvent" component={CreateEvent} />
             <Stack.Screen name="EditEvent" component={EditEvent}/>
             <Stack.Screen name="BottomNavbar" component={BottomNavbar} />

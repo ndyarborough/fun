@@ -244,7 +244,53 @@ router.post('/preferences/:userId', async (req, res) => {
   }
 });
 
+router.post('/block', async (req, res) => {
+  const { userId, blockedUserId } = req.body;
 
+  try {
+    // Find the user making the request
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Find the preferences by ID (assuming it's stored in the user's preferences field)
+    const preferences = await Preferences.findById(user.preferences);
+
+    if (!preferences) {
+      // Create a new Preferences object if it doesn't exist
+      const newPreferences = new Preferences();
+      await newPreferences.save();
+
+      user.preferences = newPreferences._id;
+    }
+
+    // Map through the blockedUsers array and check if blockedUserId is present
+    const isAlreadyBlocked = preferences.blockedUsers.some(
+      (blockedUser) => blockedUser.equals(blockedUserId)
+    );
+
+    // If the user is already blocked, return an error response
+    if (isAlreadyBlocked) {
+      return res.status(400).json({ error: 'User already blocked' });
+    }
+
+    // Add the blocked user to the blocklist
+    preferences.blockedUsers.push(blockedUserId);
+
+    // Save the updated preferences
+    await preferences.save();
+
+    // Save the updated user
+    await user.save();
+
+    res.status(200).json({ message: 'User blocked successfully' });
+  } catch (error) {
+    console.error('Error blocking user:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 
 
