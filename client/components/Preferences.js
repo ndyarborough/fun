@@ -1,32 +1,37 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Switch, Pressable } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Switch, Pressable, FlatList, Image } from 'react-native';
 import Toast from 'react-native-toast-message';
 import userApi from '../api/userApi';
 
-const Preferences = ({ route, navigation }) => {
+const Preferences = ({  navigation, userInfo, updateUser }) => {
   const [preferences, setPreferences] = useState(null);
-  const [userInfo, setUserInfo] = useState(null)
+  const [searchQuery, setSearchQuery] = useState(null);
+  const [blockUser, setBlockUser] = useState(null);
+  const [blockedUsers, setBlockedUsers] = useState([]);
   useEffect(() => {
     const fetchUserPreferences = async () => {
       try {
-        console.log()
-        const user = route.params.userInfo
-        setUserInfo(user)
-        const savedPreferences = await userApi.getPreferences(user._id);
-        const notificationPreference = savedPreferences[0].receiveNotifications;
-        const rsvpVisibilityPreference = savedPreferences[0].rsvpVisibility;
+
+        console.log(userInfo.preferences.blockedUsers);
+        const notificationPreference = userInfo.preferences.receiveNotifications;
+        const rsvpVisibilityPreference = userInfo.preferences.rsvpVisibility;
+        const blockedUserPreference = userInfo.preferences.blockedUsers;
 
         setPreferences(prevPreferences => ({
           ...prevPreferences,
           receiveNotifications: notificationPreference,
           rsvpVisibility: rsvpVisibilityPreference,
+          blockedUsers: blockedUserPreference,
+          
         }));
+        
       } catch (error) {
         console.error('Error fetching user preferences:', error);
       }
     };
 
-    fetchUserPreferences();
+    fetchUserPreferences()
+    
   }, []);
 
   const handleToggleNotifications = () => {
@@ -44,9 +49,57 @@ const Preferences = ({ route, navigation }) => {
     }));
   };
 
+  const handleBlockedUser = async () => {
+    try {
+      
+      const blockUserInfo = await userApi.getUserByUsername(searchQuery);
+      console.log(blockUserInfo);
+      
+      // Check if the user to block is found
+      if (!blockUserInfo) {
+        Toast.show({
+          type: 'error',
+          text1: 'User not found',
+          visibilityTime: 3000,
+          autoHide: true,
+          topOffset: 30,
+        });
+        return;
+      }
+      await userApi.blockUser(userInfo._id, blockUserInfo._id);
+
+      setBlockUser(blockUserInfo);
+
+      setBlockedUsers((prevBlockedUsers) => [...prevBlockedUsers, blockUserInfo]);
+
+      // Display a success toast message
+      Toast.show({
+        type: 'success',
+        text1: 'User blocked successfully',
+        visibilityTime: 3000,
+        autoHide: true,
+        topOffset: 30,
+      });
+    } catch (error) {
+      console.error('user already blocked:', error);
+
+      // Display an error toast message
+      Toast.show({
+        type: 'error',
+        text1: 'User already blocked',
+        visibilityTime: 3000,
+        autoHide: true,
+        topOffset: 30,
+      });
+    }
+  };
+
+  
+
 
   const handleSavePreferences = async () => {
     try {
+      
       // Make API request to save preferences
       await userApi.savePreferences(userInfo._id, preferences);
 
@@ -99,6 +152,32 @@ const Preferences = ({ route, navigation }) => {
               {/* <Text>{preferences.rsvpVisibility ? 'Enabled' : 'Disabled'}</Text> */}
             </View>
           </View>
+          {/* Block users */}
+          <View>
+            <TextInput
+              style={{ borderColor: 'gray', borderWidth: 1, marginBottom: 10, padding: 5 }}
+              placeholder="Block user..."
+              onChangeText={setSearchQuery}
+              value={searchQuery}
+            />
+            <Pressable onPress={handleBlockedUser} style={styles.blockButton}>
+              <Text style={styles.blockButtonText}>Block User</Text>
+            </Pressable>
+            <Text>Blocked Users: </Text>
+            <FlatList
+              data={preferences.blockedUsers}
+              keyExtractor={(item) => item._id}
+              renderItem={({ item }) => (
+                <View style={styles.blockedUserContainer}>
+                  <Text style={styles.username}>{item.username}</Text>
+                  <Pressable onPress={() => handleUnblockUser(item._id)}>
+                    <Image source={require('../assets/delete.png')} style={styles.deleteIcon} />
+                  </Pressable>
+                </View>
+              )}
+            />
+          </View>
+
           {/* Save Preferences Button */}
           <Pressable onPress={handleSavePreferences} style={styles.saveButton}>
             <Text style={styles.saveButtonText}>Save Preferences</Text>
@@ -138,6 +217,37 @@ const styles = StyleSheet.create({
   saveButtonText: {
     color: 'white',
     fontSize: 16,
+  },
+  blockButton: {
+    position: 'absolute',
+    top: 5,
+    right: 5,
+  },
+  blockButtonText: {
+    backgroundColor: 'blue',
+    borderRadius: 5,
+    padding: 2,
+    color: 'white',
+
+  },
+  blockedUserContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#ddd',
+    padding: 10,
+    marginBottom: 10,
+    borderRadius: 5,
+  },
+  
+  username: {
+    fontSize: 16,
+  },
+  
+  deleteIcon: {
+    width: 20, // Set the width of the delete icon
+    height: 20, // Set the height of the delete icon
   },
 });
 
