@@ -12,7 +12,7 @@ router.post('/register/:username/:email/:password/:fullName', async (req, res) =
   const { username, email, password, fullName } = req.params;
   try {
     // Check if the username or email is already in use
-    const existingUser = await User.findOne({ $or: [{ username }, { email }] });
+    const existingUser = await User.findOne({ $or: [{ username }, { email }] }).populate("preferences").populate("blockedUsers");
 
     if (existingUser) {
       return res.status(400).json({ message: 'Username or email already in use' });
@@ -27,7 +27,7 @@ router.post('/register/:username/:email/:password/:fullName', async (req, res) =
       email,
       password,
       fullName,
-      preferences: [preferences._id], // Assign the preferences to the user
+      preferences: preferences, // Assign the preferences to the user
     });
 
     // Save the user
@@ -51,7 +51,35 @@ router.get('/fetch/:userId', async (req, res) => {
   console.log
   try {
     const userId = req.params.userId;
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).populate("preferences").populate(
+      {path: 'preferences',
+      populate: {
+        path: 'blockedUsers',
+      }});;
+
+    console.log(user)
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Exclude sensitive information like the password before sending the user data
+    // const sanitizedUser = { _id: user._id, username: user.username, email: user.email };
+
+    res.json(user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error fetching user data' });
+  }
+});
+
+//Route for fetching user by username
+router.get('/fetchUsername/:username', async (req, res) => {
+  
+  try {
+    const username = req.params.username;
+    console.log(username);
+    const user = await User.findOne({username: username});
 
     console.log(user)
 
@@ -104,7 +132,11 @@ router.post('/login', async (req, res) => {
 
   try {
     // Find the user by username
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ username }).populate("preferences").populate(
+      {path: 'preferences',
+      populate: {
+        path: 'blockedUsers',
+      }});
 
     // Log the user data for debugging
     console.log('User found:', user);
@@ -192,6 +224,14 @@ router.get('/preferences/:userId', async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
+    if (!user.preferences) {
+      // If preferences are not found, return default values
+      return res.json({
+        receiveNotifications: true,
+        rsvpVisibility: true,
+        blockedUsers: [],
+      });
+    }
     // If user has preferences, return them; otherwise, return an empty object
     const preferences = user.preferences ? user.preferences : {};
     res.status(200).json(preferences);
@@ -205,7 +245,7 @@ router.get('/preferences/:userId', async (req, res) => {
 router.post('/preferences/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;
-    const { receiveNotifications, rsvpVisibility } = req.body;
+    const { receiveNotifications, rsvpVisibility, blockedUsers  } = req.body;
     // Add more incoming preferences as needed
 
     // Find user
@@ -224,6 +264,7 @@ router.post('/preferences/:userId', async (req, res) => {
       preferences = new Preferences({
         receiveNotifications: receiveNotifications, 
         rsvpVisibility: rsvpVisibility,
+        blockedUsers: blockedUsers
         // Add more preferences as needed
       });
       await preferences.save();
@@ -244,8 +285,102 @@ router.post('/preferences/:userId', async (req, res) => {
   }
 });
 
+router.post('/block', async (req, res) => {
+  const { userId, blockedUserId } = req.body;
+
+  try {
+    // Find the user making the request
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Find the preferences by ID (assuming it's stored in the user's preferences field)
+    const preferences = await Preferences.findById(user.preferences);
+
+    if (!preferences) {
+      // Create a new Preferences object if it doesn't exist
+      const newPreferences = new Preferences();
+      await newPreferences.save();
+
+      user.preferences = newPreferences._id;
+    }
+
+    // Map through the blockedUsers array and check if blockedUserId is present
+    const isAlreadyBlocked = preferences.blockedUsers.some(
+      (blockedUser) => blockedUser.equals(blockedUserId)
+    );
+
+    // If the user is already blocked, return an error response
+    if (isAlreadyBlocked) {
+      return res.status(400).json({ error: 'User already blocked' });
+    }
+
+    // Add the blocked user to the blocklist
+    preferences.blockedUsers.push(blockedUserId);
+
+    // Save the updated preferences
+    await preferences.save();
+
+    // Save the updated user
+    await user.save();
+
+    res.status(200).json({ message: 'User blocked successfully' });
+  } catch (error) {
+    console.error('Error blocking user:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 
 
+/*router.post('/block/:username/:blockerId', async (req, res) => {
+  try {
+    const username = req.params.username;
+
+    // Find the user to block by username
+    const userToBlock = await User.findOne({ username });
+
+    if (!userToBlock) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Check if the logged-in user already has preferences
+    const loggedInUserId = req.params.blockerId; // Replace with your actual user identification logic
+    const loggedInUser = await User.findById(loggedInUserId);
+
+    if (!loggedInUser) {
+      return res.status(404).json({ message: 'Logged-in user not found' });
+    }
+
+    let preferences = loggedInUser.preferences;
+  
+    console.log(preferences[0])
+
+    if (!preferences) {
+      // If not, create new preferences
+      preferences = new Preferences();
+      await preferences.save();
+      loggedInUser.preferences = preferences._id;
+      await loggedInUser.save();
+    }
+
+    preferences.blockedUsers = preferences.blockedUsers || [];
+
+    if (Array.isArray(preferences.blockedUsers)) {
+      preferences.blockedUsers.push(userToBlock._id);
+      await preferences.save();
+    } else {
+      console.error('Blocked users array is not properly initialized.');
+      res.status(500).json({ message: 'Internal server error' });
+    }
+
+    res.status(200).json({ message: 'User blocked successfully' });
+  } catch (error) {
+    console.error('Error blocking user:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});*/
 
 module.exports = router;

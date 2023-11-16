@@ -40,10 +40,15 @@ const App = () => {
             <Stack.Screen name="Login">
             {(props) => <Login {...props} updateUser={updateUser} />}
           </Stack.Screen>
+
+            <Stack.Screen name="Preferences">
+            {(props) => <Preferences {...props} updateUser={updateUser} userInfo={userInfo} />}
+          </Stack.Screen>
+
           <Stack.Screen name="Message">
             {(props) => <Message {...props} senderId={userInfo._id} />}
           </Stack.Screen>
-            <Stack.Screen name="Preferences" component={Preferences} />
+
             <Stack.Screen name="BrowseEvents">
             {(props) => <BrowseEvents {...props} updateUser={updateUser} userInfo={userInfo} />}
           </Stack.Screen>
