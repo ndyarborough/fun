@@ -28,7 +28,7 @@ const ViewProfile = ({ route, navigation, updateUser, userInfo }) => {
         console.log('fetchUserInfo');
         console.log(userInfo);
         const user = await userApi.getUserInfo(userInfo._id);
-        updateUser(JSON.parse(user));
+        updateUser(user);
       }
     };
     // Add an event listener for the focus event
