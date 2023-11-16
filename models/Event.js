@@ -40,11 +40,9 @@ const eventSchema = new Schema({
     tags: [
         { type: Schema.Types.ObjectId, ref: 'Tags' }
     ],
-    rsvps: {
-        users: [
+    rsvps: [
         { type: Schema.Types.ObjectId, ref: 'User' }
-        ]
-},
+    ],
     recurring: {
         type: Boolean,
         required: true,

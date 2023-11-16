@@ -11,9 +11,12 @@ const ViewProfile = ({ route, navigation, updateUser, userInfo }) => {
   const [myEvents, setMyEvents] = useState(null);
   const [myRsvps, setMyRsvps] = useState(null);
 
-  console.log(userInfo);
+
   
-    // Get Userinfo
+
+
+  // Get Userinfo
+
   useEffect(() => { // Use Effects happen when the component mounts
     const fetchUserInfo = async () => {
       console.log("fetchUserInfo");
@@ -38,7 +41,7 @@ const ViewProfile = ({ route, navigation, updateUser, userInfo }) => {
   useEffect(() => {
     const fetchUserEvents = async () => {
       try {
-        if(userInfo) {
+        if (userInfo) {
           const eventsData = await userApi.getMyEvents(userInfo._id);
           console.log(eventsData)
           setMyEvents(eventsData);
@@ -73,6 +76,11 @@ const ViewProfile = ({ route, navigation, updateUser, userInfo }) => {
     setMyEvents((prevEvents) => prevEvents.filter((e) => e._id !== eventId));
   };
 
+  const handleMessagesPress = () => {
+    // Navigate to the 'Messages' screen
+    navigation.navigate('Messages');
+  };
+
   const deleteUserSession = () => {
     AsyncStorage.removeItem('@user').then(() => {
       navigation.navigate('SignIn');
@@ -80,9 +88,12 @@ const ViewProfile = ({ route, navigation, updateUser, userInfo }) => {
     setMyEvents(null);
     setMyRsvps(null)
   };
-  
+
   const handlePreferences = () => {
+
     navigation.navigate('Preferences');
+
+
   };
 
   // HTML for ViewProfile component
@@ -100,14 +111,19 @@ const ViewProfile = ({ route, navigation, updateUser, userInfo }) => {
             <Text style={styles.buttonText}>Preferences</Text>
           </Pressable>
 
+          {/* Pressable to navigate to 'Messages' screen */}
+          {/* <Pressable style={styles.button} onPress={handleMessagesPress}>
+            <Text style={styles.buttonText}>Messages</Text>
+          </Pressable> */}
+
           <Text>Username: {userInfo.username}</Text>
           <Text>Email: {userInfo.email}</Text>
           <Text>Full Name: {userInfo.fullName}</Text>
 
           {/* Pass myEvents from ViewProfile state as a prop to MyEvents */}
-          <MyEvents 
-            navigation={navigation} 
-            myEvents={myEvents} 
+          <MyEvents
+            navigation={navigation}
+            myEvents={myEvents}
             userId={userInfo._id}
             onDeleteEvent={handleDeleteEvent} // Pass the function to MyEvents
           />
@@ -130,10 +146,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F8F8FF',
     padding: 20,
-    minWidth: '90vw'
+    minWidth: '90%'
   },
   profile: {
-    minWidth: '90%'
+    minWidth: '100%'
   },
   button: {
     border: 'solid black 1px',

@@ -35,7 +35,7 @@ const MyEvents = ({ navigation, myEvents, userId, onDeleteEvent }) => {
   };
 
   return (
-    <>
+    <View style={styles.mainContainer}>
       <View style={styles.headerContainer}>
         <Text style={styles.header}>My Events</Text>
       </View>
@@ -52,7 +52,7 @@ const MyEvents = ({ navigation, myEvents, userId, onDeleteEvent }) => {
                 ]}
               >
                 <View>
-                  <Text style={styles.eventName}>Event Name: {event.eventName}</Text>
+                  <Text style={styles.eventName}>{event.eventName}</Text>
                   <Text>{event.description}</Text>
                 </View>
               </RectButton>
@@ -76,17 +76,19 @@ const MyEvents = ({ navigation, myEvents, userId, onDeleteEvent }) => {
           <Text>Loading events...</Text>
         )}
       </ScrollView>
-    </>
+    </View>
   );
 };
 
 
 
 const styles = StyleSheet.create({
+  mainContainer: {
+    width: '80vw',
+    height: '25vh',
+  },
   container: {
-    padding: 10,
-    maxHeight: '25%',
-    maxWidth: '90vw',
+    padding: 3,
   },
   header: {
     fontSize: 20,
@@ -98,16 +100,18 @@ const styles = StyleSheet.create({
     marginTop: '2vh',
   },
   eventContainer: {
-    position: 'relative', // Make the container a positioned element
+    // position: 'relative', // Make the container a positioned element
     flexDirection: 'row', // Add flexDirection to align content in a row
     marginRight: 10,
+    width: '60vw',
+    height: '100%',
   },
   eventContent: {
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 10,
     padding: 10,
-    width: '40vw', // Set a fixed width for each event container
+    width: '60vw', // Set a fixed width for each event container
   },
   pressedEvent: {
     backgroundColor: '#ddd',

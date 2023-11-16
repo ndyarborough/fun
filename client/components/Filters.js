@@ -52,7 +52,7 @@ const Filters = ({ startDate, endDate, startTime, endTime, handleDateChange, han
           />
         </View>
       </View>
-      <Pressable onPress={() => { onFilterPress(); }}>
+      <Pressable style={styles.filterPress} onPress={() => { onFilterPress(); }}>
         <Text style={{ backgroundColor: 'rgb(0, 170, 255)', color: 'white', borderColor: 'black', borderWidth: 1, textAlign: 'center' }}>Apply Filter</Text>
       </Pressable>
     </View>
@@ -63,6 +63,9 @@ const styles = StyleSheet.create({
   header: {
     fontWeight: 500,
     fontSize: '1.5em'
+  },
+  filterPress: {
+    marginTop: '2vh',
   }
 });
 

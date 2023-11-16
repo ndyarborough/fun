@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import { RectButton } from 'react-native-gesture-handler';
 import userApi from '../api/userApi';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import eventApi from '../api/eventApi';
 
 const MyRsvps = ({ navigation, myRsvps, userId, setRsvps }) => {
@@ -31,9 +29,7 @@ const MyRsvps = ({ navigation, myRsvps, userId, setRsvps }) => {
     // Logic to cancel RSVP goes here
     eventApi.rsvp(eventId, userId)
         .then((result) => {
-            setRsvps((rsvps) => rsvps.filter((e) => e._id !== eventId));
-            // Update the local state with the updated events list
-            
+            setRsvps((rsvps) => rsvps.filter((e) => e._id !== eventId));            
         })
         .catch(error => console.error('Error canceling RSVP:', error));
   };
@@ -79,10 +75,12 @@ const MyRsvps = ({ navigation, myRsvps, userId, setRsvps }) => {
 };
 
 const styles = StyleSheet.create({
+  mainContainer: {
+    width: '80vw',
+    height: '25vh',
+  },
   container: {
-    padding: 10,
-    maxHeight: '25%',
-    maxWidth: '90vw',
+    padding: 3,
   },
   header: {
     fontSize: 20,
@@ -92,19 +90,21 @@ const styles = StyleSheet.create({
   headerContainer: {
     textAlign: 'left',
     marginTop: '2vh',
-    fontSize: '12rem'
   },
   eventContainer: {
-    position: 'relative',
-    flexDirection: 'row',
+    // position: 'relative', // Make the container a positioned element
+    flexDirection: 'row', // Add flexDirection to align content in a row
     marginRight: 10,
+    width: '60vw',
+    height: '20vh',
   },
   eventContent: {
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 10,
     padding: 10,
-    width: '40vw',
+    height: '100%',
+    width: '60vw', // Set a fixed width for each event container
   },
   pressedEvent: {
     backgroundColor: '#ddd',
