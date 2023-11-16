@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Modal } from
 import eventApi from '../api/eventApi';
 import userApi from '../api/userApi';
 import BlockingModal from './BlockingModal';
+import Toast from 'react-native-toast-message';
 
 const EventDetails = ({ route, navigation, userInfo }) => {
   const { eventId, userId } = route.params;
@@ -56,17 +57,33 @@ const EventDetails = ({ route, navigation, userInfo }) => {
       const blocked = await userApi.handleBlockConfirmation(userInfo._id, blockedUser._id);
       console.log(blocked);
   
+      // Display a success toast message
+      Toast.show({
+        type: 'success',
+        text1: 'User blocked successfully',
+        visibilityTime: 3000,
+        autoHide: true,
+        topOffset: 30,
+      });
+  
       // Close the blocking confirmation modal
       setBlockingModalVisible(false);
     } catch (error) {
       console.error('Error blocking user:', error);
-      // Handle error, show user-friendly message, etc.
+  
+      // Display an error toast message
+      Toast.show({
+        type: 'error',
+        text1: 'User already blocked',
+        visibilityTime: 3000,
+        autoHide: true,
+        topOffset: 30,
+      });
     } finally {
       setBlockingInProgress(false);
     }
   };
-
-
+  
   return (
     <View style={styles.container}>
       {loading ? (
