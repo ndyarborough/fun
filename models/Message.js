@@ -6,12 +6,12 @@ const Schema = mongoose.Schema;
 const messageSchema = new Schema({
   sender: {
     type: Schema.Types.ObjectId,
-    ref: 'User', // Make sure to replace 'User' with the actual model name for users
+    ref: 'User',
     required: true,
   },
   receiver: {
     type: Schema.Types.ObjectId,
-    ref: 'User', // Make sure to replace 'User' with the actual model name for users
+    ref: 'User',
     required: true,
   },
   content: {
@@ -21,6 +21,10 @@ const messageSchema = new Schema({
   timestamp: {
     type: Date,
     default: Date.now,
+  },
+  read: {
+    type: Boolean,
+    default: false, // Set the default value to false, indicating the message is unread initially
   },
 });
 

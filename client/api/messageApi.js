@@ -71,7 +71,29 @@ const messageApi = {
       console.error('Error fetching threads:', error);
       throw error;
     }
-  },  
+  },
+  
+  markMessageAsRead: async (messageId) => {
+    try {
+      const response = await fetch(`${apiBaseUrl}/messages/mark-as-read/${messageId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          // Include any additional headers if needed
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to mark message as read');
+      }
+
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error('Error marking message as read:', error);
+      throw error;
+    }
+  },
 };
 
 export default messageApi;

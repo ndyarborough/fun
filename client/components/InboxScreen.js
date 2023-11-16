@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
 import messageApi from '../api/messageApi';
 
 const formatTimestamp = (timestamp) => {
@@ -13,9 +14,12 @@ const formatTimestamp = (timestamp) => {
 };
 
 const InboxScreen = ({ updateUser, userInfo, navigation }) => {
+  console.log("inbox screen is rendered")
   const [threads, setThreads] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const isFocused = useIsFocused();
 
   useEffect(() => {
     const fetchThreads = async () => {
@@ -61,8 +65,10 @@ const InboxScreen = ({ updateUser, userInfo, navigation }) => {
       }
     };
 
-    fetchThreads();
-  }, [userInfo]);
+    if (isFocused) {
+      fetchThreads();
+    }
+  }, [userInfo, isFocused]);
 
   const getThreadName = (thread) => {
     const senderName = thread.senderInfo?.fullName || 'Unknown User';
@@ -71,10 +77,29 @@ const InboxScreen = ({ updateUser, userInfo, navigation }) => {
     return userInfo._id === thread.receiverInfo._id ? senderName : receiverName;
   };
 
-  const handleThreadView = (receiverId) => {
-    // Perform navigation or any other action you want when a thread is clicked
-    // Example: navigate to a thread view screen
-    navigation.navigate('Message', { receiverId });
+  const handleMarkAsRead = async (threadId) => {
+    try {
+      await messageApi.markMessageAsRead(threadId);
+      console.log('Message marked as read successfully');
+      // Perform any additional actions after marking the message as read
+    } catch (error) {
+      console.error('Error marking message as read:', error);
+      // Handle the error as needed
+    }
+  };
+
+  const handleThreadView = async (receiverId, threadId) => {
+    try {
+      await messageApi.markMessageAsRead(threadId);
+      console.log('Message marked as read successfully');
+      const updatedThreads = await messageApi.getThreads(userInfo?._id);
+      setThreads(updatedThreads);
+      // Navigate or perform other actions after updating the threads
+      navigation.navigate('Message', { receiverId });
+    } catch (error) {
+      console.error('Error marking message as read:', error);
+      // Handle the error as needed
+    }
   };
 
   return (
@@ -88,7 +113,7 @@ const InboxScreen = ({ updateUser, userInfo, navigation }) => {
             <TouchableOpacity
               key={thread._id}
               style={styles.threadContainer}
-              onPress={() => handleThreadView(thread.receiverInfo._id)}
+              onPress={() => handleThreadView(thread.receiverInfo._id, thread._id)}
             >
               <Text style={styles.receiverName}>{getThreadName(thread)}</Text>
               <View style={styles.lastMessageContainer}>
@@ -99,6 +124,9 @@ const InboxScreen = ({ updateUser, userInfo, navigation }) => {
                   <Text style={styles.lastMessageContent}>You: {thread.content}</Text>
                 )}
                 <Text style={styles.timestamp}>{formatTimestamp(thread.timestamp)}</Text>
+                {userInfo._id !== thread.senderInfo._id && !thread.read && (
+                  <View style={styles.unreadIndicator} />
+                )}
               </View>
             </TouchableOpacity>
           ))}
@@ -140,6 +168,12 @@ const styles = StyleSheet.create({
   timestamp: {
     fontSize: 12,
     color: '#666',
+  },
+  unreadIndicator: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: 'blue',
   },
 });
 

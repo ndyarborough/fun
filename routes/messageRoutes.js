@@ -128,6 +128,28 @@ router.get('/threads/:userId', async (req, res) => {
   }
 });
 
+router.put('/mark-as-read/:messageId', async (req, res) => {
+  const { messageId } = req.params;
 
+  try {
+    // Find the message by ID
+    const message = await Message.findById(messageId);
+
+    if (!message) {
+      return res.status(404).json({ error: 'Message not found' });
+    }
+
+    // Update the 'read' field to true
+    message.read = true;
+
+    // Save the updated message
+    await message.save();
+
+    res.json({ message: 'Message marked as read' });
+  } catch (error) {
+    console.error('Error marking message as read:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 module.exports = router;
