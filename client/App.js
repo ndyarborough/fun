@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
 import { View, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SignIn from './components/SignIn';
 import ViewProfile from './components/ViewProfile';
+import EditProfile from './components/EditProfile';
 import EventDetails from './components/EventDetails';
 import BrowseEvents from './components/BrowseEvents';
 import CreateEvent from './components/CreateEvent';
@@ -37,6 +37,9 @@ const App = () => {
           </Stack.Screen>
           <Stack.Screen name="ViewProfile">
             {(props) => <ViewProfile {...props} updateUser={updateUser} userInfo={userInfo} />}
+          </Stack.Screen>
+          <Stack.Screen name="EditProfile">
+            {(props) => <EditProfile {...props} updateUser={updateUser} userInfo={userInfo} />}
           </Stack.Screen>
             <Stack.Screen name="Login">
             {(props) => <Login {...props} updateUser={updateUser} />}

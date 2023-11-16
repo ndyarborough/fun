@@ -2,8 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const { Schema } = mongoose;
 
-
-const userSchema = new Schema({ 
+const userSchema = new Schema({
   username: {
     type: String,
     // unique: true,
@@ -15,21 +14,21 @@ const userSchema = new Schema({
   },
   fullName: {
     type: String,
-    required: true
+    required: true,
   },
   events: [
-    {type: Schema.Types.ObjectId, ref: 'Event'}
+    { type: Schema.Types.ObjectId, ref: 'Event' },
   ],
   rsvps: [
-    {type: Schema.Types.ObjectId, ref: 'Event'}
+    { type: Schema.Types.ObjectId, ref: 'Event' },
   ],
   password: {
     type: String,
   },
-  picture: {
+  profilePic: { // Add the profilePic field
     type: String,
   },
-  preferences: { 
+  preferences: {
     type: Schema.Types.ObjectId,
     ref: 'Preferences',
   },
@@ -57,7 +56,6 @@ userSchema.pre('save', async function (next) {
     next(error);
   }
 });
-
 
 const User = mongoose.model('User', userSchema);
 

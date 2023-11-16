@@ -41,6 +41,37 @@ router.post('/register/:username/:email/:password/:fullName', async (req, res) =
   }
 });
 
+router.put('/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const updatedProfileData = req.body;
+
+    // Find the user by ID
+    const user = await User.findById(userId);
+
+    // Check if the user exists
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Update user properties with the provided data
+    Object.keys(updatedProfileData).forEach((key) => {
+      if (updatedProfileData[key] !== undefined) {
+        user[key] = updatedProfileData[key];
+      }
+    });
+
+    // Save the updated user
+    await user.save();
+
+    // Respond with the updated user data
+    res.json(user);
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
 router.get('/hello', async (req, res) => {
   res.send('hello');

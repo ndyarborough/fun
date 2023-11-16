@@ -2,11 +2,38 @@ import { apiBaseUrl } from '../utils/apiUtils';
 
 const userApi = {
   getUserInfo: async (userId) => {
-    console.log(userId);
     const response = await fetch(`${apiBaseUrl}/user/fetch/${userId}`);
     const userInfo = await response.json();
     return userInfo; // Add this line to return userInfo
   },
+  updateProfile: async (userId, updatedProfileData) => {
+    try {
+      // Make a request to the API endpoint responsible for updating user profiles
+      const response = await fetch(`${apiBaseUrl}/user/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          // Add any other headers as needed
+        },
+        body: JSON.stringify(updatedProfileData),
+      });
+  
+      // Check if the request was successful (status code 2xx)
+      if (response.ok) {
+        // Parse the response JSON and return it
+        return await response.json();
+      } else {
+        // If the request was not successful, throw an error with the status text
+        const errorText = await response.text();
+        throw new Error(`Error updating profile: ${errorText}`);
+      }
+    } catch (error) {
+      // Handle any errors that occurred during the request
+      console.error('Error updating profile:', error);
+      throw error; // Rethrow the error for the component to handle
+    }
+  },
+  
   getUserByUsername: async (username) => {
     console.log(username);
     const response = await fetch(`${apiBaseUrl}/user/fetchUsername/${username}`);
@@ -106,7 +133,6 @@ const userApi = {
   getMyEvents: async (userId) => {
     const response = await fetch(`${apiBaseUrl}/user/myEvents/${userId}`);
     const myEvents = await response.json();
-    console.log(myEvents)
     return myEvents;
   },
   getMyRsvps: async (userId) => {

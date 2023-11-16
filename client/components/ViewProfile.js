@@ -11,25 +11,12 @@ const ViewProfile = ({ route, navigation, updateUser, userInfo }) => {
   const [myEvents, setMyEvents] = useState(null);
   const [myRsvps, setMyRsvps] = useState(null);
 
-
-  
-
-
   // Get Userinfo
-
   useEffect(() => { // Use Effects happen when the component mounts
     const fetchUserInfo = async () => {
-      console.log("fetchUserInfo");
-      if (route.params) {
-        console.log('there were route params')
-        console.log(route.params)
-        updateUser(JSON.parse(route.params.user));
-      } else {
-        console.log('fetchUserInfo');
-        console.log(userInfo);
         const user = await userApi.getUserInfo(userInfo._id);
+        console.log(user)
         updateUser(user);
-      }
     };
     // Add an event listener for the focus event
     const unsubscribe = navigation.addListener('focus', fetchUserInfo);
@@ -43,7 +30,6 @@ const ViewProfile = ({ route, navigation, updateUser, userInfo }) => {
       try {
         if (userInfo) {
           const eventsData = await userApi.getMyEvents(userInfo._id);
-          console.log(eventsData)
           setMyEvents(eventsData);
         }
       } catch (error) {
@@ -70,6 +56,12 @@ const ViewProfile = ({ route, navigation, updateUser, userInfo }) => {
 
 
   // Event Handler Functions
+
+  const handleEditProfile = () => {
+    console.log('Clicked me!');
+    navigation.navigate('EditProfile')
+    // Add logic for navigating to the edit profile screen or any other action
+  };
 
   const handleDeleteEvent = (eventId) => {
     // Remove the deleted event from the local state
@@ -103,6 +95,10 @@ const ViewProfile = ({ route, navigation, updateUser, userInfo }) => {
         <Text>No user info</Text>
       ) : (
         <View style={styles.profile}>
+          <Pressable onPress={handleEditProfile} style={styles.editProfileContainer}>
+          <Text style={styles.editProfileText}>Edit Profile</Text>
+            <Image source={require('../assets/editing.png')} style={styles.editProfileIcon} />
+          </Pressable>
           <Pressable style={styles.button} onPress={() => deleteUserSession()}>
             <Text style={styles.buttonText}>Sign Out</Text>
           </Pressable>
@@ -151,6 +147,22 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8F8FF',
     padding: 20,
     minWidth: '90%'
+  },
+  editProfileContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    padding: 16,
+    marginRight: 16, // Adjust the right margin for spacing
+  },
+  editProfileText: {
+    marginRight: 8,
+    // Add any styles for the text
+  },
+  editProfileIcon: {
+    width: 20, // Adjust width and height based on your image size
+    height: 20,
+    // Add any other styles for the image
   },
   profile: {
     minWidth: '100%'
