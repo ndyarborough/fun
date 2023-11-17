@@ -48,6 +48,15 @@ const CreateEvent = ({ route, navigation }) => {
     }
   };
 
+  const handleRemoveImage = (index) => {
+    const updatedPictures = [...formData.pictures];
+    updatedPictures.splice(index, 1);
+    setFormData({
+      ...formData,
+      pictures: updatedPictures,
+    });
+  };
+
   const formatTime = (time) => {
     if (typeof time === 'string') {
       // Assuming the time format is 'HH:mm am/pm'
@@ -68,7 +77,6 @@ const CreateEvent = ({ route, navigation }) => {
 
   const defaultStartTime = new Date();
   const defaultEndTime = new Date();
-
 
   const [formData, setFormData] = useState({
     eventName: '',
@@ -140,6 +148,39 @@ const CreateEvent = ({ route, navigation }) => {
     }
   };
 
+  const renderImagePickerContainer = () => {
+    return (
+      <View style={styles.imagePickerContainer}>
+        <Text style={styles.label}>Pictures</Text>
+        <TouchableOpacity onPress={handleImagePicker}>
+          <Image source={require('../assets/plus.png')} style={styles.plusIcon} />
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  const renderImagePreview = () => {
+    return (
+      <ScrollView horizontal style={styles.imageScrollContainer}>
+        {formData.pictures && formData.pictures.length > 0 ? (
+          formData.pictures.map((picture, index) => (
+            <View key={index} style={styles.imagePreviewContainer}>
+              <Image source={{ uri: picture }} style={styles.imagePreview} />
+              <TouchableOpacity
+                style={styles.removeImageButton}
+                onPress={() => handleRemoveImage(index)}
+              >
+                <Text style={styles.removeImageText}>X</Text>
+              </TouchableOpacity>
+            </View>
+          ))
+        ) : (
+          <Text style={styles.profilePicPlaceholder}>No Pictures</Text>
+        )}
+      </ScrollView>
+    );
+  };
+
   return (
     <>
       <View style={styles.container}>
@@ -159,20 +200,17 @@ const CreateEvent = ({ route, navigation }) => {
           value={formData.eventName}
           onChangeText={(text) => setFormData({ ...formData, eventName: text })}
         />
-        <Text>Date</Text>
         <DatePicker
           portalId="root-portal"
           selected={new Date(formData.date)}
-          onChange={(date) => {setFormData({ ...formData, date })}}
+          onChange={(date) => setFormData({ ...formData, date })}
         />
-        <Text>Start Time</Text>
         <TimePicker
           style={styles.input}
           value={formData.startTime}
           disableClock={true}
           onChange={(time) => setFormData({ ...formData, startTime: time })}
         />
-        <Text>End Time</Text>
         <TimePicker
           style={styles.input}
           value={formData.endTime}
@@ -205,24 +243,14 @@ const CreateEvent = ({ route, navigation }) => {
           />
         </View>
         <View style={styles.labelContainer}>
-          <TouchableOpacity onPress={handleImagePicker}>
-            <Image source={require('../assets/plus.png')} style={styles.plusIcon} />
-          </TouchableOpacity>
-          <Text style={styles.label}>Pictures</Text>
+          {renderImagePickerContainer()}
         </View>
-        <ScrollView horizontal style={styles.imageScrollContainer}>
-          {formData.pictures && formData.pictures.length > 0 ? (
-            formData.pictures.map((picture, index) => (
-              <Image key={index} source={{ uri: picture }} style={styles.imagePreview} />
-            ))
-          ) : (
-            <Text style={styles.profilePicPlaceholder}>No Pictures</Text>
-          )}
-        </ScrollView>
+        {renderImagePreview()}
         <Button title="Submit" onPress={handleSubmit} color="blue" />
       </View>
     </>
   );
+  
 };
 
 const styles = StyleSheet.create({
@@ -254,19 +282,40 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginLeft: 10,
   },
-  imageScrollContainer: {
+  imagePickerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 10,
-  },
-  imagePreview: {
-    width: 150,
-    height: 150,
-    borderRadius: 10,
-    marginRight: 10,
   },
   plusIcon: {
     width: 20,
     height: 20,
     tintColor: 'blue',
+    marginLeft: 10
+  },
+  imageScrollContainer: {
+    marginBottom: 10,
+  },
+  imagePreviewContainer: {
+    position: 'relative',
+    marginRight: 10,
+  },
+  imagePreview: {
+    width: 150,
+    height: 150,
+    borderRadius: 10,
+  },
+  removeImageButton: {
+    position: 'absolute',
+    top: 5,
+    right: 5,
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    borderRadius: 10,
+    padding: 5,
+  },
+  removeImageText: {
+    color: 'red',
+    fontSize: 14,
   },
   profilePicPlaceholder: {
     color: '#999',
