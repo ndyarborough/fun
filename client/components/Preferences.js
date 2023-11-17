@@ -49,10 +49,8 @@ const Preferences = ({ navigation, userInfo, updateUser }) => {
 
   const handleBlockedUser = async () => {
     try {
-
       const blockUserInfo = await userApi.getUserByUsername(searchQuery);
-      console.log(blockUserInfo);
-
+  
       // Check if the user to block is found
       if (!blockUserInfo) {
         Toast.show({
@@ -64,12 +62,20 @@ const Preferences = ({ navigation, userInfo, updateUser }) => {
         });
         return;
       }
+  
+      // Block the user using the API
       await userApi.blockUser(userInfo._id, blockUserInfo._id);
-
+  
+      // Update local state with the newly blocked user
       setBlockUser(blockUserInfo);
-
       setBlockedUsers((prevBlockedUsers) => [...prevBlockedUsers, blockUserInfo]);
-
+  
+      // Update preferences to include the newly blocked user
+      setPreferences((prevPreferences) => ({
+        ...prevPreferences,
+        blockedUsers: [...prevPreferences.blockedUsers, blockUserInfo],
+      }));
+  
       // Display a success toast message
       Toast.show({
         type: 'success',
@@ -79,12 +85,12 @@ const Preferences = ({ navigation, userInfo, updateUser }) => {
         topOffset: 30,
       });
     } catch (error) {
-      console.error('user already blocked:', error);
-
+      console.error('Error blocking user:', error);
+  
       // Display an error toast message
       Toast.show({
         type: 'error',
-        text1: 'User already blocked',
+        text1: 'Error blocking user',
         visibilityTime: 3000,
         autoHide: true,
         topOffset: 30,
