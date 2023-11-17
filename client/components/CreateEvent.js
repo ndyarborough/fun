@@ -1,20 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, Switch, StyleSheet } from 'react-native';
-import TimePicker from 'react-time-picker'; // Import the TimePicker component
+import { View, Text, TextInput, Button, Switch, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
+import TimePicker from 'react-time-picker';
 import DatePicker from 'react-datepicker';
-// needed for date picker to display properly
 import 'react-datepicker/dist/react-datepicker.css';
 import eventApi from '../api/eventApi';
-// needed for time picker to display properly
 import 'react-time-picker/dist/TimePicker.css';
-
+import * as ImagePicker from 'expo-image-picker';
 
 const CreateEvent = ({ route, navigation }) => {
   const [userInfo, setUserInfo] = useState(route.params.user);
 
-  // Once when the page loads
   useEffect(() => {
-    // Format the start and end times before updating formData
     const formattedStartTime = formatTime(formData.startTime);
     const formattedEndTime = formatTime(formData.endTime);
 
@@ -22,10 +18,35 @@ const CreateEvent = ({ route, navigation }) => {
       ...formData,
       startTime: formattedStartTime,
       endTime: formattedEndTime,
-      host: userInfo._id
+      host: userInfo._id,
+      pictures: [] // Initialize pictures array
     });
-    console.log(userInfo);
   }, []);
+
+  const handleImagePicker = async () => {
+    const newPicture = await pickImage();
+    if (newPicture) {
+      setFormData({
+        ...formData,
+        pictures: [...formData.pictures, newPicture]
+      });
+    }
+  };
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      quality: 1,
+    });
+
+    if (!result.cancelled) {
+      const selectedAsset = result;
+      return selectedAsset ? selectedAsset.uri : null;
+    } else {
+      alert('You did not select any image.');
+      return null;
+    }
+  };
 
   const formatTime = (time) => {
     if (typeof time === 'string') {
@@ -59,8 +80,8 @@ const CreateEvent = ({ route, navigation }) => {
     description: '',
     host: '',
     recurring: false,
+    pictures: [] // Add pictures array to form data
   });
-
   const [validationErrors, setValidationErrors] = useState([]);
 
   const validateEventName = (eventName) => {
@@ -183,6 +204,21 @@ const CreateEvent = ({ route, navigation }) => {
             onValueChange={(value) => setFormData({ ...formData, recurring: value })}
           />
         </View>
+        <View style={styles.labelContainer}>
+          <TouchableOpacity onPress={handleImagePicker}>
+            <Image source={require('../assets/plus.png')} style={styles.plusIcon} />
+          </TouchableOpacity>
+          <Text style={styles.label}>Pictures</Text>
+        </View>
+        <ScrollView horizontal style={styles.imageScrollContainer}>
+          {formData.pictures && formData.pictures.length > 0 ? (
+            formData.pictures.map((picture, index) => (
+              <Image key={index} source={{ uri: picture }} style={styles.imagePreview} />
+            ))
+          ) : (
+            <Text style={styles.profilePicPlaceholder}>No Pictures</Text>
+          )}
+        </ScrollView>
         <Button title="Submit" onPress={handleSubmit} color="blue" />
       </View>
     </>
@@ -207,6 +243,34 @@ const styles = StyleSheet.create({
   },
   switchLabel: {
     flex: 1,
+  },
+  labelContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  label: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginLeft: 10,
+  },
+  imageScrollContainer: {
+    marginBottom: 10,
+  },
+  imagePreview: {
+    width: 150,
+    height: 150,
+    borderRadius: 10,
+    marginRight: 10,
+  },
+  plusIcon: {
+    width: 20,
+    height: 20,
+    tintColor: 'blue',
+  },
+  profilePicPlaceholder: {
+    color: '#999',
+    fontSize: 16,
   },
   errorContainer: {
     backgroundColor: '#FFD2D2',

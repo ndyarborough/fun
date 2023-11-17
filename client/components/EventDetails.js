@@ -35,7 +35,6 @@ const EventDetails = ({ route, navigation, userInfo }) => {
     setBlockingModalVisible(true);
   };
 
-
   const handleBlockConfirmation = async () => {
     if (blockingInProgress) {
       return;
@@ -111,7 +110,6 @@ const EventDetails = ({ route, navigation, userInfo }) => {
             <Text style={styles.value}>{event.description}</Text>
           </View>
 
-
           <View style={styles.row}>
             <Text style={styles.label}>Host:</Text>
             <View style={styles.rsvpRow}>
@@ -135,6 +133,19 @@ const EventDetails = ({ route, navigation, userInfo }) => {
           <View style={styles.row}>
             <Text style={styles.label}>Recurring:</Text>
             <Text style={styles.value}>{event.recurring ? 'Yes' : 'No'}</Text>
+          </View>
+
+          <View style={styles.row}>
+            <Text style={styles.label}>Pictures:</Text>
+            <ScrollView horizontal style={styles.imageScrollContainer}>
+              {event.pictures && event.pictures.length > 0 ? (
+                event.pictures.map((picture, index) => (
+                  <Image key={index} source={{ uri: picture }} style={styles.imagePreview} />
+                ))
+              ) : (
+                <Text style={styles.profilePicPlaceholder}>No Pictures</Text>
+              )}
+            </ScrollView>
           </View>
 
           <View style={styles.row}>
@@ -173,11 +184,15 @@ const EventDetails = ({ route, navigation, userInfo }) => {
     </ScrollView>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
     backgroundColor: '#fff',
+  },
+  innerContainer: {
+    marginBottom: 20,
   },
   headerText: {
     fontSize: 24,
@@ -218,8 +233,19 @@ const styles = StyleSheet.create({
     height: 24,
     marginHorizontal: 5,
   },
+  imageScrollContainer: {
+    marginBottom: 10,
+  },
+  imagePreview: {
+    width: 150,
+    height: 150,
+    borderRadius: 10,
+    marginRight: 10,
+  },
+  profilePicPlaceholder: {
+    color: '#999',
+    fontSize: 16,
+  },
 });
 
 export default EventDetails;
-
-

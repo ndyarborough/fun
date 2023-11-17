@@ -14,30 +14,28 @@ const eventApi = {
     return events;
   },
   create: async (formData) => {
-
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     };
-
+  
     const response = await fetch(`${apiBaseUrl}/event/create`, requestOptions);
-
     const event = await response.json();
     return event;
   },
-
+  
   update: async (eventId, formData) => {
     const requestOptions = {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
-    }
-
+    };
+  
     const response = await fetch(`${apiBaseUrl}/event/update/${eventId}`, requestOptions);
     const updatedEvent = await response.json();
     return updatedEvent;
-  },
+  },  
 
   rsvp: async (eventId, hostId) => {
     try {

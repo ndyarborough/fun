@@ -7,7 +7,7 @@ const mongoose = require('mongoose');
 
 // Route for event creation
 router.post('/create', async (req, res) => {
-  const { eventName, date, startTime, endTime, address, capacity, description, host, recurring } = req.body;
+  const { eventName, date, startTime, endTime, address, capacity, pictures, host, recurring } = req.body;
 
   try {
     // Parse the date, startTime, and endTime to valid Date objects
@@ -23,7 +23,7 @@ router.post('/create', async (req, res) => {
       endTime: parsedEndTime,
       address,
       capacity,
-      description,
+      pictures, // Add pictures field
       host,
       recurring,
     });
@@ -35,7 +35,7 @@ router.post('/create', async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    console.log('create was called');
+
     // Update the user's events array
     user.events.push(event);
     await user.save();
@@ -46,6 +46,7 @@ router.post('/create', async (req, res) => {
     res.status(500).json({ message: 'Event creation failed' });
   }
 });
+
 
   // Route for event deletion
 router.delete('/delete/:eventId/:userId', async (req, res) => {
@@ -131,15 +132,16 @@ router.post('/delete-event', async (req, res)=> {
 
 // Route for updating event
 router.put('/update/:eventId', async (req, res) => {
-  const eventId = req.params.eventId; // Use req.params to get the eventId from the URL
+  const eventId = req.params.eventId;
   const updatedData = {
     eventName: req.body.eventName,
     date: req.body.date,
     address: req.body.address,
     capacity: req.body.capacity,
+    pictures: req.body.pictures, // Include pictures field
     description: req.body.description,
     host: req.body.host,
-    recurring: req.body.recurring, // Correct the typo: change 'reacurring' to 'recurring'
+    recurring: req.body.recurring,
   };
 
   try {
@@ -159,6 +161,7 @@ router.put('/update/:eventId', async (req, res) => {
     res.status(500).json({ error: 'Could not update event' });
   }
 });
+
 
 
 router.post('/rsvp/:eventId/:userId', async (req, res) => {

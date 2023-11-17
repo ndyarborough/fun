@@ -55,7 +55,12 @@ const eventSchema = new Schema({
             },
             reason: String,
           },
-    ]
+    ],
+    pictures: [
+        {
+          type: String,
+        },
+      ],
 })
 
 const Event = mongoose.model('Event', eventSchema);
