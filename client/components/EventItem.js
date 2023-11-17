@@ -1,24 +1,10 @@
-import React, {useState, useEffect} from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
-// import eventApi from '../api/eventApi';
-// import userApi from '../api/userApi';
+import React, { useState } from 'react';
+import { View, Text, Pressable, StyleSheet, Image } from 'react-native';
 
 const EventItem = ({ event, handleRSVP, handleViewDetails, handleReportPost, userInfo }) => {
-  // Log the event at the beginning
-  const eventId = event._id
-  console.log(event.host)
-  const [eventHost, setEventHost] = useState(null)
-
-  // useEffect(() => {
-  //   eventApi.getEvent(eventId).then((eventData) => {
-  //     userApi.getUserInfo(event.host).then(user => {
-  //       console.log(eventData)
-  //       setEventHost(user.fullName)
-  //     })
-  //     console.log(eventData);
-  //     setEvent(eventData);
-  //   });
-  // }, [eventId]);
+  const eventId = event._id;
+  console.log(event.host);
+  const [eventHost, setEventHost] = useState(null);
 
   return (
     <View style={styles.container}>
@@ -34,13 +20,13 @@ const EventItem = ({ event, handleRSVP, handleViewDetails, handleReportPost, use
       {/* Right side (20%) */}
       <View style={styles.rightContainer}>
         <Pressable style={styles.button} onPress={() => handleRSVP(eventId, userInfo._id)}>
-          <Text>RSVP</Text>
+          <Image source={require('../assets/rsvp.png')} style={styles.icon} />
         </Pressable>
         <Pressable style={styles.button} onPress={() => handleViewDetails(event._id)}>
-          <Text>View Details</Text>
+          <Image source={require('../assets/viewDetails.png')} style={styles.icon} />
         </Pressable>
         <Pressable style={styles.button} onPress={() => handleReportPost(event._id, event.eventName)}>
-          <Text>Report Post</Text>
+          <Image source={require('../assets/report.png')} style={styles.icon} />
         </Pressable>
       </View>
     </View>
@@ -71,6 +57,10 @@ const styles = StyleSheet.create({
     padding: 5,
     marginVertical: 5,
     backgroundColor: '#DDDDDD',
+  },
+  icon: {
+    width: 24,
+    height: 24,
   },
 });
 
