@@ -5,34 +5,32 @@ import userApi from '../api/userApi';
 
 const Preferences = ({ navigation, userInfo, updateUser }) => {
   const [preferences, setPreferences] = useState(null);
-  const [searchQuery, setSearchQuery] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
   const [blockUser, setBlockUser] = useState(null);
   const [blockedUsers, setBlockedUsers] = useState([]);
+
   useEffect(() => {
     const fetchUserPreferences = async () => {
       try {
+        const userPreferences = await userApi.getPreferences(userInfo._id);
 
-        console.log(userInfo.preferences.blockedUsers);
-        const notificationPreference = userInfo.preferences.receiveNotifications;
-        const rsvpVisibilityPreference = userInfo.preferences.rsvpVisibility;
-        const blockedUserPreference = userInfo.preferences.blockedUsers;
+        const notificationPreference = userPreferences.receiveNotifications;
+        const rsvpVisibilityPreference = userPreferences.rsvpVisibility;
+        const blockedUserPreference = userPreferences.blockedUsers;
+        console.log(userPreferences.blockedUsers)
 
-        setPreferences(prevPreferences => ({
-          ...prevPreferences,
+        setPreferences({
           receiveNotifications: notificationPreference,
           rsvpVisibility: rsvpVisibilityPreference,
           blockedUsers: blockedUserPreference,
-
-        }));
-
+        });
       } catch (error) {
         console.error('Error fetching user preferences:', error);
       }
     };
 
-    fetchUserPreferences()
-
-  }, []);
+    fetchUserPreferences();
+  }, [userInfo._id]);
 
   const handleToggleNotifications = () => {
     // Toggle the state for receiving notifications
@@ -100,18 +98,18 @@ const Preferences = ({ navigation, userInfo, updateUser }) => {
       const updatedBlockedUsers = preferences.blockedUsers.filter(
         (user) => user._id !== blockedUserId
       );
-  
+
       // Make an API request to update the user with the modified preferences
       await userApi.savePreferences(userInfo._id, {
         blockedUsers: updatedBlockedUsers,
       });
-  
+
       // Update the state with the modified blockedUsers array
       setPreferences((prevPreferences) => ({
         ...prevPreferences,
         blockedUsers: updatedBlockedUsers,
       }));
-  
+
       // Display a success toast message
       Toast.show({
         type: 'success',
@@ -122,7 +120,7 @@ const Preferences = ({ navigation, userInfo, updateUser }) => {
       });
     } catch (error) {
       console.error('Error unblocking user:', error);
-  
+
       // Display an error toast message
       Toast.show({
         type: 'error',
@@ -198,8 +196,9 @@ const Preferences = ({ navigation, userInfo, updateUser }) => {
               style={{ borderColor: 'gray', borderWidth: 1, marginBottom: 10, padding: 5 }}
               placeholder="Block user..."
               onChangeText={setSearchQuery}
-              value={searchQuery}
+              value={searchQuery || ''} // Use an empty string if searchQuery is null
             />
+
             <Pressable onPress={handleBlockedUser} style={styles.blockButton}>
               <Text style={styles.blockButtonText}>Block User</Text>
             </Pressable>

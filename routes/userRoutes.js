@@ -245,8 +245,11 @@ router.get('/myRsvps/:userId', async (req, res) => {
 router.get('/preferences/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;
-    const user = await User.findById(userId).populate('preferences');
-    
+    const user = await User.findById(userId).populate({
+      path: 'preferences',
+      populate: { path: 'blockedUsers' }, // Populate the blockedUsers field inside preferences
+    });
+
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -259,6 +262,7 @@ router.get('/preferences/:userId', async (req, res) => {
         blockedUsers: [],
       });
     }
+
     // If user has preferences, return them; otherwise, return an empty object
     const preferences = user.preferences ? user.preferences : {};
     res.status(200).json(preferences);
@@ -267,6 +271,7 @@ router.get('/preferences/:userId', async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+
 
 // Create or update user preferences
 router.post('/preferences/:userId', async (req, res) => {
