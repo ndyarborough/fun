@@ -1,99 +1,100 @@
-const apiBaseUrl = 'http://localhost:3000';
+// api/messageApi.js
+
+import { apiBaseUrl } from "../utils/apiUtils";
 
 const messageApi = {
-  sendMessage: async (senderId, receiverId, content) => {
-    console.log('Sender ID:', senderId);
-    console.log('Receiver ID:', receiverId);
-
+  sendMessage: async ({ sender, receiver, text }) => {
     try {
       const response = await fetch(`${apiBaseUrl}/messages/send`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ senderId, receiverId, content }),
+        body: JSON.stringify({ sender, receiver, text }),
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to send message');
-      }
+      const data = await response.json();
 
-      const result = await response.json();
-      console.log(result);
-
-      // Check if the response includes both message and receiverInfo
-      if (result && result.message && result.receiverInfo) {
-        return { message: result.message, receiverInfo: result.receiverInfo };
+      if (response.ok) {
+        return data;
       } else {
-        throw new Error('Invalid response format');
+        throw new Error(data.error || 'Error sending message');
       }
     } catch (error) {
       console.error('Error sending message:', error);
-      throw error;
+      throw new Error('Error sending message');
     }
   },
 
-
-  getThreadHistory: async (senderId, receiverId) => {
+  getThread: async (senderId, receiverId) => {
     try {
-      const response = await fetch(`${apiBaseUrl}/messages/thread-history/${senderId}/${receiverId}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch thread history');
-      }
-      const threadHistory = await response.json();
-      console.log(threadHistory); // Log the thread history to check its structure
-      return threadHistory;
-    } catch (error) {
-      console.error('Error fetching thread history:', error);
-      throw error;
-    }
-  },
-  getThreads: async (userId) => {
-    try {
-      const response = await fetch(`${apiBaseUrl}/messages/threads/${userId}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch threads');
-      }
-      const threads = await response.json();
-  
-      // Log the threads to check their structure
-      console.log(threads);
-  
-      // Adapt the structure of the threads as needed in your front-end code
-      const adaptedThreads = threads.map((thread) => ({
-        ...thread,
-        receiverInfo: thread.receiverInfo, // Keep receiverInfo as is
-        senderInfo: thread.senderInfo, // Add senderInfo to each thread
-      }));
-  
-      return adaptedThreads;
-    } catch (error) {
-      console.error('Error fetching threads:', error);
-      throw error;
-    }
-  },
-  
-  markMessageAsRead: async (messageId) => {
-    try {
-      const response = await fetch(`${apiBaseUrl}/messages/mark-as-read/${messageId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          // Include any additional headers if needed
-        },
-      });
+      const response = await fetch(`${apiBaseUrl}/messages/${senderId}/${receiverId}`);
+      const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error('Failed to mark message as read');
+      if (response.ok) {
+        return data;
+      } else {
+        throw new Error(data.error || 'Error fetching thread');
       }
-
-      const result = await response.json();
-      return result;
     } catch (error) {
-      console.error('Error marking message as read:', error);
-      throw error;
+      console.error('Error fetching thread:', error);
+      throw new Error('Error fetching thread');
     }
   },
+
+  getHistory: async (userId) => {
+    try {
+      const response = await fetch(`${apiBaseUrl}/messages/${userId}`);
+      const data = await response.json();
+  
+      if (response.ok) {
+        const threads = {};
+  
+        data.forEach((message) => {
+          const senderId = message.sender._id;
+          const receiverId = message.receiver._id;
+  
+          // Create a unique thread identifier using both sender and receiver IDs
+          const threadId = [senderId, receiverId].sort().join('-');
+  
+          if (!threads[threadId]) {
+            threads[threadId] = {
+              sender: message.sender,
+              receiver: message.receiver,
+              messages: [],
+            };
+          }
+  
+          threads[threadId].messages.push({
+            _id: message._id,
+            text: message.text,
+            createdAt: message.createdAt,
+            sender: message.sender,
+            receiver: message.receiver,
+            // Add other message properties if needed
+          });
+        });
+  
+        // Convert threads object to array and sort by the most recent message
+        const sortedThreads = Object.values(threads).sort((a, b) => {
+          const aDate = new Date(a.messages[a.messages.length - 1].createdAt);
+          const bDate = new Date(b.messages[b.messages.length - 1].createdAt);
+          return bDate - aDate;
+        });
+  
+        return sortedThreads;
+      } else {
+        throw new Error(data.error || 'Error fetching message history');
+      }
+    } catch (error) {
+      console.error('Error fetching message history:', error);
+      throw new Error('Error fetching message history');
+    }
+  },
+  
+  
+
+  // You can add more functions for handling media, location, etc. if needed.
 };
 
 export default messageApi;

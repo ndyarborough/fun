@@ -1,4 +1,5 @@
 import { apiBaseUrl } from '../utils/apiUtils';
+import { localTime, localDate } from '../utils/formatFunctions';
 
 const eventApi = {
   getEvent: async (eventId) => {
@@ -8,44 +9,64 @@ const eventApi = {
     return events;
   },
   getEvents: async () => {
-    const response = await fetch(`${apiBaseUrl}/event/fetch`);
+    try {
+      const response = await fetch(`${apiBaseUrl}/event/fetch`);
+      const events = await response.json();
 
-    const events = await response.json();
-    return events;
+      return events;
+    } catch (error) {
+      console.error('Error fetching events:', error);
+      throw error; // Rethrow the error to handle it in the component
+    }
   },
   create: async (formData) => {
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData),
-    };
-  
-    const response = await fetch(`${apiBaseUrl}/event/create`, requestOptions);
-    const event = await response.json();
-    return event;
+    try {
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      };
+
+      const response = await fetch(`${apiBaseUrl}/event/create`, requestOptions);
+
+      if (!response.ok) {
+        throw new Error(`Failed to create event. Status: ${response.status}`);
+      }
+
+      const event = await response.json();
+      return event;
+    } catch (error) {
+      console.error('Error creating event:', error.message);
+      throw error; // Re-throw the error for the caller to handle
+    }
   },
-  
-  update: async (eventId, formData) => {
+
+
+  edit: async (eventId, formData) => {
     const requestOptions = {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData),
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
     };
-  
-    const response = await fetch(`${apiBaseUrl}/event/update/${eventId}`, requestOptions);
+    console.log('Edit Api call was hit, fetching from the database!');
+    const response = await fetch(`${apiBaseUrl}/event/edit/${eventId}`, requestOptions);
     const updatedEvent = await response.json();
     return updatedEvent;
-  },  
+},
 
-  rsvp: async (eventId, hostId) => {
+  rsvp: async (eventId, userId) => {
     try {
-      const response = await fetch(`${apiBaseUrl}/event/rsvp/${eventId}/${hostId}`, {
+      const response = await fetch(`${apiBaseUrl}/event/rsvp/${eventId}/${userId}`, {
         method: 'POST',
       });
-
+  
       if (response.ok) {
-        const result = await response.json();
-        return result;
+        if (response.status === 200) {
+          return 'RSVP';
+        }
+        if (response.status === 201) {
+          return 'UNRSVP';
+        }
       } else {
         const error = await response.json();
         throw new Error(error.message);
@@ -54,16 +75,33 @@ const eventApi = {
       console.error('Error RSVPing to event:', error);
       throw new Error('Failed to RSVP to event');
     }
-  }, 
+  },
+  setInterested: async (eventId, userId) => {
+    try {
+      const response = await fetch(`${apiBaseUrl}/event/interested/${eventId}/${userId}`, {
+        method: 'POST',
+      });
+
+      if(!response) {
+        console.log('No response from db')
+      }
+      return response.json()
+      
+    } catch (error) {
+      console.error('Error setting interested for event:', error);
+      throw new Error('Failed to set intersted for event');
+    }
+  },
+  
 
   delete: async (eventId, userId) => {
     const requestOptions = {
       method: 'DELETE', // Change this to 'DELETE'
       headers: { 'Content-Type': 'application/json' },
     };
-  
+
     const response = await fetch(`${apiBaseUrl}/event/delete/${eventId}/${userId}`, requestOptions); // Adjust the endpoint
-  
+
     if (response.status === 200) {
       const result = await response.json();
       return result;
@@ -96,7 +134,7 @@ const eventApi = {
   },
   getRsvpList: async (eventId) => {
     try {
-      const response = await fetch(`${apiBaseUrl}/events/${eventId}/rsvps`);
+      const response = await fetch(`${apiBaseUrl}/event/${eventId}/rsvps`);
       if (!response.ok) {
         throw new Error('Failed to fetch RSVP list');
       }
@@ -107,6 +145,49 @@ const eventApi = {
       throw error;
     }
   },
+  getInterestedList: async (eventId) => {
+    try {
+      const response = await fetch(`${apiBaseUrl}/event/${eventId}/interested`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch Interested list');
+      }
+      
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error fetching Interested list:', error);
+      throw error;
+    }
+  },
+  cancel: async (eventId) => {
+    console.log('Cancelling from api')
+    try {
+      const response = await fetch(`${apiBaseUrl}/event/${eventId}/cancel`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      return response.json()
+    } catch(error) {
+      console.error(error)
+    }
+  },  
+  reactivate: async (eventId) => {
+    console.log('Reactivating from api')
+    try {
+      const response = await fetch(`${apiBaseUrl}/event/${eventId}/reactivate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      return response.json()
+    } catch(error) {
+      console.error(error)
+    }
+  }
 }
 
 export default eventApi;

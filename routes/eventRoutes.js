@@ -1,66 +1,55 @@
 const express = require('express');
-
-const User = require('../models/User');
 const router = express.Router();
-const Event = require('../models/Event'); //Import event model
-const mongoose = require('mongoose');
+const Event = require('../models/Event');
+const User = require('../models/User');
 
-// Route for event creation
 router.post('/create', async (req, res) => {
-  const { eventName, date, startTime, endTime, address, capacity, pictures, host, recurring } = req.body;
-
   try {
-    // Parse the date, startTime, and endTime to valid Date objects
-    const parsedDate = new Date(date);
-    const parsedStartTime = new Date(`1970-01-01T${startTime}`);
-    const parsedEndTime = new Date(`1970-01-01T${endTime}`);
+    // Extract event details from the request body
+    const { eventName, date, startTime, endTime, address, capacity, description, host, pictures, tags } = req.body;
 
-    // Create a new event
     const event = new Event({
       eventName,
-      date: parsedDate,
-      startTime: parsedStartTime,
-      endTime: parsedEndTime,
+      date: new Date(date),
+      startTime: new Date(startTime),
+      endTime: new Date(endTime),
       address,
       capacity,
-      pictures, // Add pictures field
+      description,
+      tags,
       host,
-      recurring,
+      pictures,
+      status: 'active',
+      rsvps: [],
+      interested: [],
     });
-    await event.save();
 
-    // Find the user by the host ID
+    await event.save();
     const user = await User.findById(host);
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Update the user's events array
     user.events.push(event);
     await user.save();
 
-    res.json({ message: 'Event successfully created' });
+    res.json(event);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Event creation failed' });
   }
 });
 
-
-  // Route for event deletion
 router.delete('/delete/:eventId/:userId', async (req, res) => {
     const { eventId, userId } = req.params;
   
     try {
-      // Find the event by its ID
       const event = await Event.findById(eventId);
-  
       if (!event) {
         return res.status(404).json({ message: 'Event not found' });
       }
   
-      // Check if the user is the host of the event
       if (event.host.toString() !== userId) {
         return res.status(403).json({ message: 'Unauthorized: You are not the host of this event' });
       }
@@ -80,7 +69,7 @@ router.delete('/delete/:eventId/:userId', async (req, res) => {
       await Event.findOneAndDelete(event);
       await user.save();
   
-      res.json({ message: 'Event successfully deleted' });
+      res.json({ message: 'Deleted' });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Event deletion failed' });
@@ -92,8 +81,8 @@ router.delete('/delete/:eventId/:userId', async (req, res) => {
 //Route for fetching event data
 router.get('/fetch', async (req, res) => {
     try{
-        const event = await Event.find().populate('host').populate('rsvps');
-        res.json(event);
+        const events = await Event.find().populate('host');
+        res.json(events);
     }catch (error){
         console.error('Error fetching events:', error);
         res.status(500).json({message: 'Error fetching event data'});
@@ -103,18 +92,14 @@ router.get('/fetch', async (req, res) => {
 
 // Fetch user event by Id
 router.get('/fetch/:eventId', async (req, res) => {
-  console.log('fetch event');
-  try {
-    const eventId = req.params.eventId;
-    const event = await Event.findById(eventId)
-      .populate('host') // Populate the host field
-      .populate('rsvps');
-
-    res.json(event);
-  } catch (error) {
-    console.error('Error fetching events:', error);
-    res.status(500).json({ message: 'Error fetching event data' });
-  }
+    try{
+        const eventId = req.params.eventId;
+        const event = await Event.findById(eventId).populate('rsvps');
+        res.json(event);
+    }catch (error){
+        console.error('Error fetching events:', error);
+        res.status(500).json({message: 'Error fetching event data'});
+    }
 });
 
 //Route for deleting event
@@ -131,17 +116,20 @@ router.post('/delete-event', async (req, res)=> {
 });
 
 // Route for updating event
-router.put('/update/:eventId', async (req, res) => {
-  const eventId = req.params.eventId;
+router.put('/edit/:eventId', async (req, res) => {
+  console.log(req.body.pictures.length)
+  const eventId = req.params.eventId; 
   const updatedData = {
     eventName: req.body.eventName,
     date: req.body.date,
+    startTime: req.body.startTime,
+    endTime: req.body.endTime,
     address: req.body.address,
     capacity: req.body.capacity,
-    pictures: req.body.pictures, // Include pictures field
     description: req.body.description,
+    tags: req.body.tags,
     host: req.body.host,
-    recurring: req.body.recurring,
+    pictures: req.body.pictures
   };
 
   try {
@@ -163,59 +151,106 @@ router.put('/update/:eventId', async (req, res) => {
 });
 
 
-
 router.post('/rsvp/:eventId/:userId', async (req, res) => {
-    const eventId = req.params.eventId;
-    const userId = req.params.userId;
+  const eventId = req.params.eventId;
+  const userId = req.params.userId;
 
-    try {
-        // Find the event by its ID
-        const event = await Event.findOne({ _id: eventId });
+  try {
+      // Find the event by its ID
+      const event = await Event.findOne({ _id: eventId });
 
-        if (!event) {
-            return res.status(404).json({ message: 'Event not found' });
-        }
+      if (!event) {
+          return res.status(404).json({ message: 'Event not found' });
+      }
 
-        // Check if the user is already in the rsvps array
-        const userIndex = event.rsvps.findIndex(user => user.toString() === userId);
+      // Check if the user is already in the rsvps array
+      const eventRsvpIndex = event.rsvps.findIndex(user => user.toString() === userId);
+      const eventInterestedIndex = event.interested.findIndex(user => user.toString() === userId);
+      if (eventRsvpIndex !== -1) {
+          // If user is already in the RSVP list, remove them
+          event.rsvps.splice(eventRsvpIndex, 1);
+          res.status(201).json({ message: `You are no longer RSVP\'d for \"${event.eventName}\"`, event });
+      } else {
+          // If user is not in the RSVP list, add them
+          event.rsvps.push(userId);
+          res.status(200).json({ message: `You have RSVP\'d for \"${event.eventName}\"`, event });
 
-        if (userIndex !== -1) {
-            // If user is already in the RSVP list, remove them
-            event.rsvps.splice(userIndex, 1);
-            res.status(200).json({ message: `You are no longer RSVP\'d for \"${event.eventName}\"`, event });
-        } else {
-            // If user is not in the RSVP list, add them
-            event.rsvps.push(userId);
-            res.status(200).json({ message: `You have RSVP\'d for \"${event.eventName}\"`, event });  
-        }
+          // Remove the event from the user's interested array
+          const user = await User.findOne({ _id: userId });
 
-        // Save the updated event
-        await event.save();
+          if (user) {
+              const interestedIndex = user.interested.findIndex(event => event.toString() === eventId);
+              if (interestedIndex !== -1) {
+                  // If the event is in the user's interested, remove it
+                  user.interested.splice(interestedIndex, 1);
+                  event.interested.splice(eventInterestedIndex, 1);
+                  await user.save();
+              }
+          }
+      }
 
-        // Update the user's rsvps array
-        const user = await User.findOne({ _id: userId });
+      await event.save();
 
-        if (user) {
-            // Check if the event is already in the user's rsvps array
-            const eventIndex = user.rsvps.findIndex(event => event.toString() === eventId);
+      // Update the user's rsvps array
+      const user = await User.findOne({ _id: userId });
 
-            if (eventIndex !== -1) {
-                // If the event is already in the user's rsvps, remove it
-                user.rsvps.splice(eventIndex, 1);
-            } else {
-                // If the event is not in the user's rsvps, add it
-                user.rsvps.push(eventId);
-            }
+      if (user) {
+          // Check if the event is already in the user's rsvps array
+          const eventIndex = user.rsvps.findIndex(event => event.toString() === eventId);
 
-            // Save the updated user
-            await user.save();
-        }
+          if (eventIndex !== -1) {
+              // If the event is already in the user's rsvps, remove it
+              user.rsvps.splice(eventIndex, 1);
+          } else {
+              // If the event is not in the user's rsvps, add it
+              user.rsvps.push(eventId);
+          }
 
-    } catch (error) {
-        console.error('Error adding/removing user to/from RSVPs:', error);
-        res.status(500).json({ message: 'Internal server error' });
-    }
+          // Save the updated user
+          await user.save();
+      }
+
+  } catch (error) {
+      console.error('Error adding/removing user to/from RSVPs:', error);
+      res.status(500).json({ message: 'Internal server error' });
+  }
 });
+
+
+router.post('/interested/:eventId/:userId', async (req, res) => {
+  const { eventId, userId } = req.params;
+
+  const user = await User.findById(userId);
+  if (!user) {
+    return res.status(404).json({ message: 'User not found' });
+  }
+
+  const event = await Event.findById(eventId);
+  if (!event) {
+    return res.status(404).json({ message: 'Event not found' });
+  }
+
+  if (user.interested.some(item => item._id.toString() === eventId)) {
+    console.log('user already interested in the event');
+  
+    // Remove the event from the interested list
+    user.interested = user.interested.filter(item => item._id.toString() !== eventId);
+    event.interested = event.interested.filter(item => item._id.toString() !== userId);
+    await user.save(); // Save the user after making changes
+    await event.save(); 
+    return res.status(200).json({ message: 'Deleted' });
+  } else {
+    console.log('adding event to user.interested')
+    // Add the event to the users interested list and vice versa
+    user.interested.push(eventId);
+    event.interested.push(userId);
+    await user.save(); // Save the user after making changes
+    await event.save();
+    return res.status(200).json({ message: 'Added' });
+  }
+});
+
+
 
 router.post('/report', async (req, res) => {
     try {
@@ -248,12 +283,11 @@ router.post('/report', async (req, res) => {
       const eventId = req.params.eventId;
   
       // Find the event
-      const event = await Event.findById(eventId);
+      const event = await Event.findById(eventId).populate('rsvps');
   
       if (!event) {
         return res.status(404).json({ error: 'Event not found.' });
       }
-  
       res.json(event.rsvps);
     } catch (error) {
       console.error('Error fetching event RSVPs:', error);
@@ -261,5 +295,53 @@ router.post('/report', async (req, res) => {
     }
   });
 
+  router.get('/:eventId/interested', async (req, res) => {
+    try {
+      const eventId = req.params.eventId;
+  
+      // Find the event
+      const event = await Event.findById(eventId).populate('interested');
+  
+      if (!event) {
+        return res.status(404).json({ error: 'Event not found.' });
+      }
+      return res.json(event.interested);
+    } catch (error) {
+      console.error('Error fetching event Intersted:', error);
+      res.status(500).json({ error: 'Internal server error.' });
+    }
+  });
+
+  router.post('/:eventId/cancel', async (req, res) => {
+    try {
+      const eventId = req.params.eventId;
+
+      const event = await Event.findById(eventId);
+      if(event.status === 'active') {
+        console.log('status was active')
+        event.status = 'cancelled';
+        event.save();
+        return res.status(200).json({message: event.status});
+      } 
+    } catch(error) {
+      console.error('Error canceling event')
+    }
+  });
+
+  router.post('/:eventId/reactivate', async (req, res) => {
+    try {
+      const eventId = req.params.eventId;
+
+      const event = await Event.findById(eventId);
+      if(event.status === 'cancelled') {
+        console.log('status was cancelled')
+        event.status = 'active';
+        event.save();
+        return res.status(200).json({message: event.status});
+      } 
+    } catch(error) {
+      console.error('Error canceling event')
+    }
+  });
 
 module.exports = router;

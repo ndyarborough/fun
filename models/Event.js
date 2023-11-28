@@ -38,15 +38,14 @@ const eventSchema = new Schema({
         required: true
     },
     tags: [
-        { type: Schema.Types.ObjectId, ref: 'Tags' }
+        { type: String } // Keep it as an array of strings
     ],
     rsvps: [
         { type: Schema.Types.ObjectId, ref: 'User' }
     ],
-    recurring: {
-        type: Boolean,
-        required: true,
-    },
+    interested: [
+        { type: Schema.Types.ObjectId, ref: 'User' }
+    ],
     reports: [
         {
             userId: {
@@ -58,9 +57,10 @@ const eventSchema = new Schema({
     ],
     pictures: [
         {
-          type: String,
+          type: String, // Assuming the URIs are stored as strings
         },
       ],
+    status: {type: String, required: false}
 })
 
 const Event = mongoose.model('Event', eventSchema);

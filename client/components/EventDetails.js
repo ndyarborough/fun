@@ -1,251 +1,188 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, FlatList, TouchableOpacity, Image, Modal } from 'react-native';
-import eventApi from '../api/eventApi';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Image, StyleSheet, FlatList, Pressable } from 'react-native';
 import userApi from '../api/userApi';
-import BlockingModal from './BlockingModal';
-import Toast from 'react-native-toast-message';
+import eventApi from '../api/eventApi';
+import EventInfo from './EventInfo';
+import RSVPList from './RSVPList';
+import InterestedList from './InterestedList';
+import EventPictures from './EventPictures';
+import { heightPercentageToDP, widthPercentageToDP } from 'react-native-responsive-screen';
+import { useAppContext } from './AppContext';
+import { useNavigation } from '@react-navigation/native';
 
-const EventDetails = ({ route, navigation, userInfo }) => {
-  const { eventId, userId } = route.params;
-  const [event, setEventData] = useState(null);
-  const [rsvps, setRsvps] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [blockedUser, setBlockedUser] = useState(null);
-  const [blockingModalVisible, setBlockingModalVisible] = useState(false);
-  const [blockingInProgress, setBlockingInProgress] = useState(false);
+const EventDetails = ({ route }) => {
+    const navigation = useNavigation();
+    const { event } = route.params;
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const eventResponse = await eventApi.getEvent(eventId);
-        setEventData(eventResponse);
-        setRsvps(eventResponse.rsvps);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        setLoading(false);
-      }
+    const [hostData, setHostData] = useState(null);
+    const [rsvps, setRsvps] = useState(null);
+    const [interested, setInterested] = useState(null);
+
+    const {user} = useAppContext();
+  
+    useEffect(() => {
+        
+        const fetchData = async () => {
+            const host = await userApi.getUserInfo(event.host._id);
+            const rsvpsData = await eventApi.getRsvpList(event._id);
+            const interestedData = await eventApi.getInterestedList(event._id);
+            setHostData(host);
+            setRsvps(rsvpsData);
+            setInterested(interestedData);
+        };
+
+        fetchData();
+    }, [event.host, event._id]);
+
+    const handleEditPress = () => {
+        navigation.navigate('Edit Event', {event})
+        
+    }
+
+    const renderTags = () => {
+        return (
+            <View style={styles.tagContainer}>
+                <Text style={styles.headerText}>Tags</Text>
+                <View style={styles.tagList}>
+                    {event.tags && event.tags.length > 0 ? (
+                        event.tags.map((tag, index) => (
+                            <Text key={index} style={styles.tag}>
+                                {tag}
+                            </Text>
+                        ))
+                    ) : (
+                        <Text>No tags available</Text>
+                    )}
+                </View>
+            </View>
+        );
     };
 
-    fetchData();
-  }, [eventId]);
-
-  const handleBlockUser = (user) => {
-    setBlockedUser(user);
-    setBlockingModalVisible(true);
-  };
-
-  const handleBlockConfirmation = async () => {
-    if (blockingInProgress) {
-      return;
-    }
-
-    try {
-      setBlockingInProgress(true);
-      const blocked = await userApi.handleBlockConfirmation(userInfo._id, blockedUser._id);
-
-      Toast.show({
-        type: 'success',
-        text1: 'User blocked successfully',
-        visibilityTime: 3000,
-        autoHide: true,
-        topOffset: 30,
-      });
-
-      setBlockingModalVisible(false);
-    } catch (error) {
-      console.error('Error blocking user:', error);
-
-      Toast.show({
-        type: 'error',
-        text1: 'User already blocked',
-        visibilityTime: 3000,
-        autoHide: true,
-        topOffset: 30,
-      });
-    } finally {
-      setBlockingInProgress(false);
-    }
-  };
-
-  const formatTime = (time) => {
-    return new Date(time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  };
-
-  return (
-    <ScrollView style={styles.container}>
-      {loading ? (
-        <Text>Loading event data...</Text>
-      ) : (
-        <View style={styles.innerContainer}>
-          <Text style={styles.headerText}>{event.eventName}</Text>
-
-          <View style={styles.row}>
-            <Text style={styles.label}>Date:</Text>
-            <Text style={styles.value}>{new Date(event.date).toLocaleDateString()}</Text>
-          </View>
-
-          <View style={styles.row}>
-            <Text style={styles.label}>Start Time:</Text>
-            <Text style={styles.value}>{formatTime(event.startTime)}</Text>
-          </View>
-
-          <View style={styles.row}>
-            <Text style={styles.label}>End Time:</Text>
-            <Text style={styles.value}>{formatTime(event.endTime)}</Text>
-          </View>
-
-          <View style={styles.row}>
-            <Text style={styles.label}>Address:</Text>
-            <Text style={styles.value}>{event.address}</Text>
-          </View>
-
-          <View style={styles.row}>
-            <Text style={styles.label}>Capacity:</Text>
-            <Text style={styles.value}>{event.capacity} people</Text>
-          </View>
-
-          <View style={styles.row}>
-            <Text style={styles.label}>Description:</Text>
-            <Text style={styles.value}>{event.description}</Text>
-          </View>
-
-          <View style={styles.row}>
-            <Text style={styles.label}>Host:</Text>
-            <View style={styles.rsvpRow}>
-              <Text style={styles.rsvpName}>{event.host.username}</Text>
-              {userInfo._id !== event.host._id && (
-                <View style={styles.rsvpIcons}>
-                  <TouchableOpacity onPress={() => console.log(`Sending message to ${event.host.username}`)}>
-                    <Image source={require('../assets/message.png')} style={styles.icon} />
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={() => console.log('adding host as a friend')}>
-                    <Image source={require('../assets/addFriend.png')} style={styles.icon} />
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={() => handleBlockUser(event.host)}>
-                    <Image source={require('../assets/blockUser.png')} style={styles.icon} />
-                  </TouchableOpacity>
-                </View>
-              )}
-            </View>
-          </View>
-
-          <View style={styles.row}>
-            <Text style={styles.label}>Recurring:</Text>
-            <Text style={styles.value}>{event.recurring ? 'Yes' : 'No'}</Text>
-          </View>
-
-          <View style={styles.row}>
-            <Text style={styles.label}>Pictures:</Text>
-            <ScrollView horizontal style={styles.imageScrollContainer}>
-              {event.pictures && event.pictures.length > 0 ? (
-                event.pictures.map((picture, index) => (
-                  <Image key={index} source={{ uri: picture }} style={styles.imagePreview} />
-                ))
-              ) : (
-                <Text style={styles.profilePicPlaceholder}>No Pictures</Text>
-              )}
-            </ScrollView>
-          </View>
-
-          <View style={styles.row}>
-            <Text style={styles.label}>RSVPs:</Text>
-            <FlatList
-              data={rsvps}
-              keyExtractor={(item) => `${item.userId}-${item.email}`}
-              renderItem={({ item }) => (
-                <View style={styles.rsvpRow}>
-                  <Text style={styles.rsvpName}>{item.username}</Text>
-                  <View style={styles.rsvpIcons}>
-                    <TouchableOpacity onPress={() => navigation.navigate('Message', { receiverId: item._id })}>
-                      <Image source={require('../assets/message.png')} style={styles.icon} />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => console.log('adding friend')}>
-                      <Image source={require('../assets/addFriend.png')} style={styles.icon} />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => handleBlockUser(item)}>
-                      <Image source={require('../assets/blockUser.png')} style={styles.icon} />
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              )}
-            />
-          </View>
-        </View>
-      )}
-      {blockingModalVisible && (
-        <BlockingModal
-          blockingModalVisible={blockingModalVisible}
-          setBlockingModalVisible={setBlockingModalVisible}
-          blockedUser={blockedUser}
-          handleBlockConfirmation={handleBlockConfirmation}
+    return (
+        <FlatList
+            style={styles.container}
+            data={[{ key: 'pictures' }, { key: 'eventInfo' }, { key: 'tags' }, { key: 'rsvps' }, { key: 'interested' }]}
+            renderItem={({ item }) => {
+                switch (item.key) {
+                    case 'pictures':
+                        return <EventPictures pictures={event.pictures} />;
+                        case 'eventInfo':
+                            return hostData ? (
+                                <>
+                                    <EventInfo event={event} hostData={hostData} />
+                                    {event.host._id === user._id && (
+                                        <Pressable
+                                            style={styles.editIconContainer}
+                                            onPress={handleEditPress}
+                                        >
+                                            <Text>Edit Event</Text>
+                                            <Image
+                                                source={require('../assets/edit.png')}
+                                                style={styles.editIcon}
+                                            />
+                                        </Pressable>
+                                    )}
+                                </>
+                            ) : null;
+                    case 'tags':
+                        return renderTags();
+                    case 'rsvps':
+                        return rsvps ? <RSVPList rsvps={rsvps} /> : null;
+                    case 'interested':
+                        return interested ? <InterestedList interested={interested} /> : null;
+                    default:
+                        return null;
+                }
+            }}
+            keyExtractor={(item) => item.key}
         />
-      )}
-    </ScrollView>
-  );
+    );
 };
 
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#fff',
-  },
-  innerContainer: {
-    marginBottom: 20,
-  },
-  headerText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  row: {
-    flexDirection: 'column',
-    marginBottom: 10,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  value: {
-    fontSize: 16,
-  },
-  rsvpRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 10,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    padding: 10,
-    borderRadius: 8,
-  },
-  rsvpName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  rsvpIcons: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  icon: {
-    width: 24,
-    height: 24,
-    marginHorizontal: 5,
-  },
-  imageScrollContainer: {
-    marginBottom: 10,
-  },
-  imagePreview: {
-    width: 150,
-    height: 150,
-    borderRadius: 10,
-    marginRight: 10,
-  },
-  profilePicPlaceholder: {
-    color: '#999',
-    fontSize: 16,
-  },
+    container: {
+        flex: 1,
+        paddingLeft: 10,
+        paddingRight: 10,
+    },
+    headerText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
+    row: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 10,
+    },
+    label: {
+        fontWeight: 'bold',
+        marginRight: 10,
+    },
+    value: {
+        flex: 1,
+    },
+    imageContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        marginTop: 10,
+    },
+    image: {
+        width: 100,
+        height: 100,
+        margin: 5,
+    },
+    hostContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        borderWidth: 1,
+        borderRadius: 12,
+        padding: 8,
+        flex: 1,
+    },
+    username: {
+        marginRight: 10,
+    },
+    iconContainer: {
+        flexDirection: 'row',
+        alignItems: 'flex-end',
+        justifyContent: 'flex-end',
+    },
+    icon: {
+        width: 20,
+        height: 20,
+        marginLeft: 5,
+    },
+    rsvpContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#ddd',
+        padding: 10,
+        marginBottom: 10,
+        borderRadius: 5,
+    },
+    tagContainer: {
+        marginBottom: 20,
+    },
+    tagList: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+    },
+    tag: {
+        backgroundColor: '#ddd',
+        padding: 5,
+        borderRadius: 8,
+        marginRight: 5,
+        marginBottom: 5,
+    },
+    editIcon: {
+        height: 25,
+        width: 25
+    }
 });
 
 export default EventDetails;

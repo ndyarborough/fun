@@ -1,12 +1,11 @@
 {
   "expo": {
-    "name": "Meetup",
-    "slug": "Meetup",
+    "name": "Meetup_2.0",
+    "slug": "Meetup_2.0",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "plugins": ["expo-image-picker"],
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -15,7 +14,6 @@
     "assetBundlePatterns": [
       "**/*"
     ],
-  
     "ios": {
       "supportsTablet": true
     },
@@ -23,17 +21,18 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      },
-      "package": "com.anonymous.Meetup"
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "extra": {
-      "eas": {
-        "projectId": "bdb8cb6d-a8c9-4e22-9ebd-23dbde835e36"
-      }
-    },
-    "scheme": "Meetup"
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
+      ]
+    ]
   }
 }

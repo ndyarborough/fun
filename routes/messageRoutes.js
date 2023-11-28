@@ -1,153 +1,66 @@
+// routes/messages.js
+
 const express = require('express');
 const router = express.Router();
 const Message = require('../models/Message');
 const User = require('../models/User');
+const mongoose = require('mongoose')
 
+// Send message
 router.post('/send', async (req, res) => {
   try {
-    const { senderId, receiverId, content } = req.body;
+    const { sender, receiver, text } = req.body;
 
-    const receiverInfo = await User.findById(receiverId);
+    // Check if sender and receiver are valid users
+    const senderUser = await User.findById(sender);
+    const receiverUser = await User.findById(receiver);
 
-    if (!receiverInfo) {
-      return res.status(404).json({ error: 'Receiver not found' });
+    if (!senderUser || !receiverUser) {
+      return res.status(400).json({ error: 'Invalid sender or receiver' });
     }
 
-    const newMessage = new Message({
-      sender: senderId,
-      receiver: receiverId,
-      content: content,
-    });
-
-    const savedMessage = await newMessage.save();
-
-    res.json({ message: savedMessage, receiverInfo });
+    const message = await Message.create({ sender, receiver, text });
+    res.status(201).json(message);
   } catch (error) {
     console.error('Error sending message:', error);
-    res.status(500).json({ error: 'Failed to send message' });
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
-
-router.get('/thread-history/:senderId/:receiverId', async (req, res) => {
-  const { senderId, receiverId } = req.params;
-  console.log('Received request with senderId:', senderId);
-  console.log('Received request with receiverId:', receiverId);
-
+// Get only thread between a sender and receiver
+router.get('/:senderId/:receiverId', async (req, res) => {
   try {
-    const receiverInfo = await User.findById(receiverId);
+    const { senderId, receiverId } = req.params;
 
-    if (!receiverInfo) {
-      return res.status(404).json({ error: 'Receiver not found' });
-    }
-
-    const threadHistory = await Message.find({
+    // Fetch messages for the specified sender and receiver
+    const messages = await Message.find({
       $or: [
         { sender: senderId, receiver: receiverId },
         { sender: receiverId, receiver: senderId },
       ],
-    })
-      .sort({ timestamp: 'asc' })
-      .exec();
+    }).sort({ createdAt: 1 });
 
-    // Send the thread history and receiverInfo as a JSON response
-    res.json({ threadHistory, receiverInfo });
+    res.status(200).json(messages);
   } catch (error) {
-    console.error('Error fetching thread history:', error);
+    console.error('Error fetching thread:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
-router.get('/threads/:userId', async (req, res) => {
-  const { userId } = req.params;
-
+// Get All messages for user
+router.get('/:userId', async (req, res) => {
   try {
-    // Fetch user information for the logged-in user
-    const user = await User.findById(userId);
+    const userId = req.params.userId;
 
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-
-    // Aggregate messages to find unique threads based on participants
-    const threads = await Message.aggregate([
-      {
-        $match: {
-          $or: [
-            { sender: user._id },
-            { receiver: user._id },
-          ],
-        },
-      },
-      {
-        $group: {
-          _id: {
-            $cond: {
-              if: { $eq: ['$sender', user._id] },
-              then: '$receiver',
-              else: '$sender',
-            },
-          },
-          lastMessage: { $last: '$$ROOT' },
-        },
-      },
-      {
-        $replaceRoot: { newRoot: '$lastMessage' },
-      },
-      {
-        $lookup: {
-          from: 'users', // Name of the users collection
-          localField: 'receiver',
-          foreignField: '_id',
-          as: 'receiverInfo',
-        },
-      },
-      {
-        $lookup: {
-          from: 'users', // Name of the users collection
-          localField: 'sender',
-          foreignField: '_id',
-          as: 'senderInfo',
-        },
-      },
-      {
-        $unwind: '$receiverInfo',
-      },
-      {
-        $unwind: '$senderInfo',
-      },
-      {
-        $sort: { timestamp: -1 },
-      },
-    ]);
-
-    res.json(threads);
+    const messages = await Message.find({
+      $or: [
+        { sender: userId },
+        { receiver: userId },
+      ],
+    }).populate('sender', 'username').populate('receiver', 'username').sort({ createdAt: 1 });
+    res.status(200).json(messages);
   } catch (error) {
-    console.error('Error fetching threads:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-router.put('/mark-as-read/:messageId', async (req, res) => {
-  const { messageId } = req.params;
-
-  try {
-    // Find the message by ID
-    const message = await Message.findById(messageId);
-
-    if (!message) {
-      return res.status(404).json({ error: 'Message not found' });
-    }
-
-    // Update the 'read' field to true
-    message.read = true;
-
-    // Save the updated message
-    await message.save();
-
-    res.json({ message: 'Message marked as read' });
-  } catch (error) {
-    console.error('Error marking message as read:', error);
+    console.error('Error fetching message history:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
