@@ -57,7 +57,7 @@ router.get('/:userId', async (req, res) => {
         { sender: userId },
         { receiver: userId },
       ],
-    }).populate('sender', 'username').populate('receiver', 'username').sort({ createdAt: 1 });
+    }).populate('sender', 'username profilePic').populate('receiver', 'username profilePic').sort({ createdAt: 1 });
     res.status(200).json(messages);
   } catch (error) {
     console.error('Error fetching message history:', error);

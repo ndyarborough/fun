@@ -48,7 +48,6 @@ const eventApi = {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
     };
-    console.log('Edit Api call was hit, fetching from the database!');
     const response = await fetch(`${apiBaseUrl}/event/edit/${eventId}`, requestOptions);
     const updatedEvent = await response.json();
     return updatedEvent;
@@ -160,7 +159,6 @@ const eventApi = {
     }
   },
   cancel: async (eventId) => {
-    console.log('Cancelling from api')
     try {
       const response = await fetch(`${apiBaseUrl}/event/${eventId}/cancel`, {
         method: 'POST',
@@ -175,7 +173,6 @@ const eventApi = {
     }
   },  
   reactivate: async (eventId) => {
-    console.log('Reactivating from api')
     try {
       const response = await fetch(`${apiBaseUrl}/event/${eventId}/reactivate`, {
         method: 'POST',

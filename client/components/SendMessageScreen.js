@@ -45,7 +45,6 @@ const SendMessageScreen = ({ route }) => {
   }, [senderId, receiverId]);
 
   const handleProfilePress = () => {
-    console.log('pressed a profile pic for: ', receiver.username)
     if(user._id === receiver._id) {
       navigation.navigate('Dashboard')
     } else {

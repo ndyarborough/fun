@@ -43,7 +43,6 @@ const ProfileBanner = ({ notMe, randomUserId }) => {
     }
 
     const handleMessage = () => {
-        console.log('Send message to ', randomUserId);
         navigation.navigate('Send Message', {
             senderId: user._id,
             receiverId: randomUserId,

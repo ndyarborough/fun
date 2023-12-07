@@ -117,7 +117,6 @@ router.post('/delete-event', async (req, res)=> {
 
 // Route for updating event
 router.put('/edit/:eventId', async (req, res) => {
-  console.log(req.body.pictures.length)
   const eventId = req.params.eventId; 
   const updatedData = {
     eventName: req.body.eventName,
@@ -231,7 +230,6 @@ router.post('/interested/:eventId/:userId', async (req, res) => {
   }
 
   if (user.interested.some(item => item._id.toString() === eventId)) {
-    console.log('user already interested in the event');
   
     // Remove the event from the interested list
     user.interested = user.interested.filter(item => item._id.toString() !== eventId);
@@ -240,7 +238,6 @@ router.post('/interested/:eventId/:userId', async (req, res) => {
     await event.save(); 
     return res.status(200).json({ message: 'Deleted' });
   } else {
-    console.log('adding event to user.interested')
     // Add the event to the users interested list and vice versa
     user.interested.push(eventId);
     event.interested.push(userId);
@@ -318,7 +315,6 @@ router.post('/report', async (req, res) => {
 
       const event = await Event.findById(eventId);
       if(event.status === 'active') {
-        console.log('status was active')
         event.status = 'cancelled';
         event.save();
         return res.status(200).json({message: event.status});
@@ -334,7 +330,6 @@ router.post('/report', async (req, res) => {
 
       const event = await Event.findById(eventId);
       if(event.status === 'cancelled') {
-        console.log('status was cancelled')
         event.status = 'active';
         event.save();
         return res.status(200).json({message: event.status});

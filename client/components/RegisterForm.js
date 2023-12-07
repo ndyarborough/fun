@@ -62,9 +62,7 @@ const RegisterForm = () => {
     }
 
     const registerData = await userApi.register(username, email, password, fullName);
-    console.log(registerData);
     if (registerData.message) {
-      console.log(registerData.message)
     } else {
       await AsyncStorage.setItem('@userId', registerData.user._id)
       setLoggedIn(true);

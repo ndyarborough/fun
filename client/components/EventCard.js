@@ -194,7 +194,6 @@ const EventCard = ({ event }) => {
   };
 
   const handleProfilePress = () => {
-    console.log('pressed a profile pic for: ', event.host.username)
     if (user._id === event.host._id) {
       navigation.navigate('Dashboard')
     } else {

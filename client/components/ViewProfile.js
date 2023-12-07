@@ -1,6 +1,6 @@
 // ViewProfile.js
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, ScrollView, Pressable, Text } from 'react-native';
+import { View, StyleSheet, ScrollView, Pressable, Text, ActivityIndicator } from 'react-native';
 import ProfileBanner from './ProfileBanner';
 import EventList from './EventList';
 import userApi from '../api/userApi';
@@ -8,12 +8,16 @@ import { heightPercentageToDP as hp, widthPercentageToDP as wp } from 'react-nat
 
 const ViewProfile = ({ route }) => {
   const { randomUser } = route.params; // Extract randomUser from the route
-  console.log("Random User: ",randomUser)
-  const [selectedSection, setSelectedSection] = useState('all');
+  const [selectedSection, setSelectedSection] = useState('hosting');
   const [user, setUser] = useState({});
   const [userEvents, setUserEvents] = useState([]);
   const [userRsvps, setUserRsvps] = useState([]);
   const [userInterested, setUserInterested] = useState([]);
+
+  const [isLoadingEvents, setIsLoadingEvents] = useState(true);
+  const [isLoadingRsvps, setIsLoadingRsvps] = useState(true);
+  const [isLoadingInterested, setIsLoadingInterested] = useState(true);
+
 
   const fetchData = async () => {
     try {
@@ -21,10 +25,14 @@ const ViewProfile = ({ route }) => {
       setUser(userData);
       const eventsData = await userApi.getMyEvents(randomUser);
       setUserEvents(eventsData || []);
+      setIsLoadingEvents(false);
       const rsvpData = await userApi.getMyRsvps(randomUser);
       setUserRsvps(rsvpData || []);
+      setIsLoadingRsvps(false);
+
       const interestedData = await userApi.getMyInterested(randomUser);
       setUserInterested(interestedData);
+      setIsLoadingInterested(false);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -38,16 +46,20 @@ const ViewProfile = ({ route }) => {
     setSelectedSection(section);
   };
 
+  if (isLoadingEvents || isLoadingRsvps || isLoadingInterested) {
+    return (
+      <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#000000" />
+          <Text style={styles.loadMessage}>Loading {user.username}'s Profile</Text>
+      </View>
+    );
+  }
+
   return (
     <ScrollView style={styles.container}>
       <ProfileBanner user={user} notMe={true} randomUserId={randomUser}/>
 
       <View style={styles.sectionToggleContainer}>
-        {/* New 'All' tab */}
-        <Pressable onPress={() => handleSectionChange('all')} style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
-          <Text style={selectedSection === 'all' ? styles.selectedToggleText : styles.toggleText}>All</Text>
-        </Pressable>
-
         <Pressable onPress={() => handleSectionChange('hosting')} style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
           <Text style={selectedSection === 'hosting' ? styles.selectedToggleText : styles.toggleText}>Hosting</Text>
         </Pressable>
@@ -64,14 +76,6 @@ const ViewProfile = ({ route }) => {
       {/* Display EventList based on the selected section */}
       <View style={styles.eventsContainer}>
         {/* New condition for 'All' tab */}
-        {selectedSection === 'all' && (
-          <EventList
-            events={
-              (userEvents || []).concat(userRsvps || [], userInterested || [])
-            }
-            title="All"
-          />
-        )}
         {selectedSection === 'hosting' && (
           <EventList
             events={(userEvents || []).filter(event => event.status !== 'cancelled')}
@@ -99,6 +103,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginBottom: hp('1%'),
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   eventsContainer: {
     width: wp('90%'),

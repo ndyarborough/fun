@@ -28,7 +28,6 @@ const UserWithOptions = ({ randomUser, receiverId }) => {
   };
 
   const handleProfilePress = () => {
-    console.log('pressed a profile pic for: ', randomUser.username)
     if(user._id === randomUser._id) {
       navigation.navigate('Dashboard')
     } else {

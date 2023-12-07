@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet, FlatList, Pressable } from 'react-native';
+import { View, Text, Image, StyleSheet, FlatList, Pressable, ActivityIndicator } from 'react-native';
 import userApi from '../api/userApi';
 import eventApi from '../api/eventApi';
 import EventInfo from './EventInfo';
 import RSVPList from './RSVPList';
 import InterestedList from './InterestedList';
 import EventPictures from './EventPictures';
-import { heightPercentageToDP, widthPercentageToDP } from 'react-native-responsive-screen';
 import { useAppContext } from './AppContext';
 import { useNavigation } from '@react-navigation/native';
-
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 const EventDetails = ({ route }) => {
     const navigation = useNavigation();
     const { event } = route.params;
@@ -17,26 +16,32 @@ const EventDetails = ({ route }) => {
     const [hostData, setHostData] = useState(null);
     const [rsvps, setRsvps] = useState(null);
     const [interested, setInterested] = useState(null);
+    const [isLoading, setIsLoading] = useState(true); // Added loading state
 
-    const {user} = useAppContext();
-  
+    const { user } = useAppContext();
+
     useEffect(() => {
-        
-        const fetchData = async () => {
-            const host = await userApi.getUserInfo(event.host._id);
-            const rsvpsData = await eventApi.getRsvpList(event._id);
-            const interestedData = await eventApi.getInterestedList(event._id);
-            setHostData(host);
-            setRsvps(rsvpsData);
-            setInterested(interestedData);
-        };
 
+        const fetchData = async () => {
+            try {
+                const host = await userApi.getUserInfo(event.host._id);
+                const rsvpsData = await eventApi.getRsvpList(event._id);
+                const interestedData = await eventApi.getInterestedList(event._id);
+                setHostData(host);
+                setRsvps(rsvpsData);
+                setInterested(interestedData);
+                setIsLoading(false); // Set loading to false when data is fetched
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                setIsLoading(false); // Set loading to false even in case of an error
+            }
+        };
         fetchData();
     }, [event.host, event._id]);
 
     const handleEditPress = () => {
-        navigation.navigate('Edit Event', {event})
-        
+        navigation.navigate('Edit Event', { event })
+
     }
 
     const renderTags = () => {
@@ -58,34 +63,45 @@ const EventDetails = ({ route }) => {
         );
     };
 
+    if (isLoading) {
+        // Display a loading indicator while the data is being fetched
+        return (
+            <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#0000ff" />
+                <Text style={styles.loadMessage}>Loading Event Details</Text>
+            </View>
+        );
+    }
+
     return (
         <FlatList
             style={styles.container}
-            data={[{ key: 'pictures' }, { key: 'eventInfo' }, { key: 'tags' }, { key: 'rsvps' }, { key: 'interested' }]}
+            data={[{ key: 'pictures' }, { key: 'eventInfo' }, { key: 'rsvps' }, { key: 'interested' }, { key: 'tags' }]}
             renderItem={({ item }) => {
                 switch (item.key) {
+                    case 'tags':
+                        return renderTags(); // Render tags after EventInfo
                     case 'pictures':
                         return <EventPictures pictures={event.pictures} />;
-                        case 'eventInfo':
-                            return hostData ? (
-                                <>
-                                    <EventInfo event={event} hostData={hostData} />
-                                    {event.host._id === user._id && (
-                                        <Pressable
-                                            style={styles.editIconContainer}
-                                            onPress={handleEditPress}
-                                        >
-                                            <Text>Edit Event</Text>
-                                            <Image
-                                                source={require('../assets/edit.png')}
-                                                style={styles.editIcon}
-                                            />
-                                        </Pressable>
-                                    )}
-                                </>
-                            ) : null;
-                    case 'tags':
-                        return renderTags();
+                    
+                    case 'eventInfo':
+                        return hostData ? (
+                            <>
+                                <EventInfo event={event} hostData={hostData} />
+                                {event.host._id === user._id && (
+                                    <Pressable
+                                        style={styles.editIconContainer}
+                                        onPress={handleEditPress}
+                                    >
+                                        <Text>Edit Event</Text>
+                                        <Image
+                                            source={require('../assets/edit.png')}
+                                            style={styles.editIcon}
+                                        />
+                                    </Pressable>
+                                )}
+                            </>
+                        ) : null;
                     case 'rsvps':
                         return rsvps ? <RSVPList rsvps={rsvps} /> : null;
                     case 'interested':
@@ -100,11 +116,21 @@ const EventDetails = ({ route }) => {
 };
 
 
+
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingLeft: 10,
         paddingRight: 10,
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    loadMessage: {
+        marginTop: 10
     },
     headerText: {
         fontSize: 18,
@@ -140,7 +166,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 12,
         padding: 8,
-        flex: 1,
+        flex: .6,
     },
     username: {
         marginRight: 10,

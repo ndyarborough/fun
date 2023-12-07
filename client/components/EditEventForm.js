@@ -122,8 +122,6 @@ const EditEventForm = ({ route }) => {
 
         // Call the API function for editing the event
         const updatedEvent = await eventApi.edit(editedEvent._id, editedEvent);
-        console.log('updatedEvent: ', updatedEvent);
-        console.log('updatedEventLength: ', updatedEvent.pictures.length);
 
         // Update the events in context
         setMyEvents((prevEvents) => prevEvents.map((e) => (e._id === updatedEvent._id ? updatedEvent : e)));

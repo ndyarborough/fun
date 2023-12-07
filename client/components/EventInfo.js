@@ -2,12 +2,11 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import UserWithOptions from './UserWithOptions';
 import { useAppContext } from './AppContext';
-import { widthPercentageToDP } from 'react-native-responsive-screen';
+import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 
 const EventInfo = ({ event, hostData }) => {
 
   const { getCurrentUser } = useAppContext();
-    console.log('Event Info HostData.username: ', hostData.username)
   
     const formatDate = (dateString) => {
         return new Date(dateString).toLocaleDateString();
@@ -56,7 +55,7 @@ const EventInfo = ({ event, hostData }) => {
             </View>
 
             <Text style={styles.label}>Host:</Text>
-            <View style={styles.row}>
+            <View style={styles.hostContainer}>
                 {hostData ? (
                     <UserWithOptions
                         randomUser={hostData}
@@ -73,7 +72,7 @@ const EventInfo = ({ event, hostData }) => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flex: .6,
     },
     headerText: {
         fontSize: 18,
@@ -84,22 +83,12 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginBottom: 10,
-        width: widthPercentageToDP('100%')
     },
     label: {
         fontWeight: 'bold',
         marginRight: 10,
     },
     value: {
-        flex: 1,
-    },
-    hostContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        borderWidth: 1,
-        borderRadius: 12,
-        padding: 8,
         flex: 1,
     },
     username: {

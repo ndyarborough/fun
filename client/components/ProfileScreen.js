@@ -1,6 +1,6 @@
 // ProfileScreen.js
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, ScrollView, Pressable, Text } from 'react-native';
+import { View, StyleSheet, ScrollView, Pressable, Text, ActivityIndicator } from 'react-native';
 import ProfileBanner from './ProfileBanner';
 import EventList from './EventList';
 import { useAppContext } from './AppContext';
@@ -20,18 +20,29 @@ const ProfileScreen = () => {
     setMyInterested,
   } = useAppContext();
 
-  const [selectedSection, setSelectedSection] = useState('all'); // Set 'all' as the default tab
+  const [selectedSection, setSelectedSection] = useState('all');
+  const [isLoadingEvents, setIsLoadingEvents] = useState(true);
+  const [isLoadingRsvps, setIsLoadingRsvps] = useState(true);
+  const [isLoadingInterested, setIsLoadingInterested] = useState(true);
 
   const fetchData = async () => {
     try {
       const eventsData = await userApi.getMyEvents(user._id);
       setMyEvents(eventsData || []);
+      setIsLoadingEvents(false);
+
       const rsvpData = await userApi.getMyRsvps(user._id);
       setMyRsvps(rsvpData || []);
+      setIsLoadingRsvps(false);
+
       const interestedData = await userApi.getMyInterested(user._id);
-      setMyInterested(interestedData);
+      setMyInterested(interestedData || []);
+      setIsLoadingInterested(false);
     } catch (error) {
       console.error('Error fetching data:', error);
+      setIsLoadingEvents(false);
+      setIsLoadingRsvps(false);
+      setIsLoadingInterested(false);
     }
   };
 
@@ -45,41 +56,54 @@ const ProfileScreen = () => {
     }, [user._id])
   );
 
-  const handleSectionChange = (section) => {
-    setSelectedSection(section);
-  };
+  if (isLoadingEvents || isLoadingRsvps || isLoadingInterested) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ProfileBanner user={user} setLoggedIn={setLoggedIn} />
+        <View style={styles.loadingContent}>
+          <View style={styles.sectionToggleContainer}>
+            <Pressable onPress={() => setSelectedSection('all')} style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
+              <Text style={selectedSection === 'all' ? styles.selectedToggleText : styles.toggleText}>All</Text>
+            </Pressable>
+            <Pressable onPress={() => setSelectedSection('hosting')} style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
+              <Text style={selectedSection === 'hosting' ? styles.selectedToggleText : styles.toggleText}>Hosting</Text>
+            </Pressable>
+            <Pressable onPress={() => setSelectedSection('attending')} style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
+              <Text style={selectedSection === 'attending' ? styles.selectedToggleText : styles.toggleText}>Attending</Text>
+            </Pressable>
+            <Pressable onPress={() => setSelectedSection('interested')} style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
+              <Text style={selectedSection === 'interested' ? styles.selectedToggleText : styles.toggleText}>Interested</Text>
+            </Pressable>
+          </View>
+          <ActivityIndicator size="large" color="#000000" />
+          <Text style={styles.loadMessage}>Loading Your Events</Text>
+        </View>
+      </View>
+    );
+  }
+
 
   return (
     <ScrollView style={styles.container}>
       <ProfileBanner user={user} setLoggedIn={setLoggedIn} />
-
       <View style={styles.sectionToggleContainer}>
-        {/* New 'All' tab */}
-        <Pressable onPress={() => handleSectionChange('all')} style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
+        <Pressable onPress={() => setSelectedSection('all')} style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
           <Text style={selectedSection === 'all' ? styles.selectedToggleText : styles.toggleText}>All</Text>
         </Pressable>
-
-        <Pressable onPress={() => handleSectionChange('hosting')} style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
+        <Pressable onPress={() => setSelectedSection('hosting')} style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
           <Text style={selectedSection === 'hosting' ? styles.selectedToggleText : styles.toggleText}>Hosting</Text>
         </Pressable>
-
-        <Pressable onPress={() => handleSectionChange('attending')} style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
+        <Pressable onPress={() => setSelectedSection('attending')} style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
           <Text style={selectedSection === 'attending' ? styles.selectedToggleText : styles.toggleText}>Attending</Text>
         </Pressable>
-
-        <Pressable onPress={() => handleSectionChange('interested')} style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
+        <Pressable onPress={() => setSelectedSection('interested')} style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}>
           <Text style={selectedSection === 'interested' ? styles.selectedToggleText : styles.toggleText}>Interested</Text>
         </Pressable>
       </View>
-
-      {/* Display EventList based on the selected section */}
       <View style={styles.eventsContainer}>
-        {/* New condition for 'All' tab */}
         {selectedSection === 'all' && (
           <EventList
-            events={
-              (myEvents || []).concat(myRsvps || [], myInterested || [])
-            }
+            events={(myEvents || []).concat(myRsvps || [], myInterested || [])}
             title="All"
           />
         )}
@@ -106,10 +130,24 @@ const ProfileScreen = () => {
   );
 };
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginBottom: hp('1%'),
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+  loadingContent: {
+    marginTop: hp('1%'),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadMessage: {
+    marginTop: 10
   },
   eventsContainer: {
     width: wp('90%'),

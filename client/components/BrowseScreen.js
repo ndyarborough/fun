@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import EventCard from './EventCard';
 import { useAppContext } from './AppContext';
 import eventApi from '../api/eventApi';
@@ -16,15 +16,16 @@ const BrowseScreen = () => {
     user,
     browseEvents,
     setBrowseEvents,
-  } = useAppContext(); // Use the context hook
+  } = useAppContext();
 
   const [search, setSearch] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
+        setIsLoading(true);
         const eventData = await eventApi.getEvents();
-        // Filter out events with status 'cancelled'
         const filteredEvents = eventData.filter(event => event.status !== 'cancelled');
 
         const searchedEvents = filteredEvents.filter(event =>
@@ -35,11 +36,36 @@ const BrowseScreen = () => {
         setBrowseEvents(searchedEvents);
       } catch (error) {
         console.error('Error fetching events:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchEvents();
   }, [search, setBrowseEvents]);
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <View style={styles.filterContainer}>
+          <CustomSearchBar search={search} updateSearch={setSearch} />
+          <Filters />
+        </View>
+        <TouchableOpacity
+          style={styles.buttonContainer}
+          onPress={() => {
+            navigation.navigate('Create Event');
+          }}
+        >
+          <Text style={styles.buttonText}>Create Event</Text>
+          <Image source={PlusIcon} style={styles.plusIcon} />
+        </TouchableOpacity>
+        <ActivityIndicator size="large" color="#000000" />
+        <Text style={styles.loadMessage}>Loading Events Near You</Text>
+      </View>
+    );
+  }
+
 
   return (
     <View style={styles.container}>
@@ -56,6 +82,7 @@ const BrowseScreen = () => {
         <Text style={styles.buttonText}>Create Event</Text>
         <Image source={PlusIcon} style={styles.plusIcon} />
       </TouchableOpacity>
+
       <ScrollView style={styles.scroll}>
         {browseEvents ? (
           browseEvents.map((event) => (
@@ -74,6 +101,19 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+  loadingContent: {
+    marginTop: hp('1%'),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadMessage: {
+    marginTop: 10
   },
   scroll: {
     width: wp('95%'),
@@ -107,6 +147,9 @@ const styles = StyleSheet.create({
     width: wp('100%'), // Ensure the filter container takes the entire width
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  loadingIndicator: {
+    marginTop: 16, // Adjust the marginTop as needed
   },
 });
 
