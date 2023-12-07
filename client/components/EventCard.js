@@ -157,7 +157,7 @@ const EventCard = ({ event }) => {
           <EventActionButton
             onPress={handleEventCancel}
             icon={require('../assets/cancel.png')}
-            text={`Cancel Event (${event.status})`}
+            text={event.status === 'active' ? 'Cancel' : 'Reactivate'}
           />
         );
       } else {
@@ -166,7 +166,7 @@ const EventCard = ({ event }) => {
           <EventActionButton
             onPress={handleDelete}
             icon={require('../assets/delete.png')}
-            text={`Delete Event (${event.status})`}
+            text={`Delete`}
           />
         );
       }
@@ -203,28 +203,10 @@ const EventCard = ({ event }) => {
 
   return (
     <View style={styles.card}>
-      {renderHostInfo()}
+      
       <View style={styles.row}>
+        {renderHostInfo()}
         <EventActionButton onPress={handleViewDetails} icon={require('../assets/viewDetails.png')} text="View Details" />
-
-        {user._id !== event.host._id && (
-          <>
-            <EventActionButton
-              onPress={() => handleRSVP(event._id)}
-              icon={myRsvps.some(rsvp => rsvp._id === event._id) ? checkIcon : require('../assets/rsvp.png')}
-              text={myRsvps.some(rsvp => rsvp._id === event._id) ? 'Attending' : 'RSVP'}
-            />
-
-            {!myRsvps.some(rsvp => rsvp._id === event._id) && (
-              <EventActionButton
-                onPress={handleInterested}
-                icon={myInterested.some(interested => interested._id === event._id) ? checkIcon : plusIcon}
-                text="Interested"
-              />
-            )}
-          </>
-        )}
-
         {renderDeleteButton()}
       </View>
       {event.pictures && event.pictures.length > 0 && (
@@ -233,7 +215,7 @@ const EventCard = ({ event }) => {
         </View>
       )}
 
-      <Text>{renderTags()}</Text>
+      <Text style={styles.tags}>{renderTags()}</Text>
 
       <View style={styles.row}>
         <Text style={styles.title}>{event.eventName}</Text>
@@ -254,7 +236,25 @@ const EventCard = ({ event }) => {
       </Modal>
 
       <Text>{event.description}</Text>
-      <Text>{localDate(event.date)} @ {localTime(event.startTime)} - {localTime(event.endTime)}</Text>
+      <Text style={styles.tags}>{localDate(event.date)} @ {localTime(event.startTime)} - {localTime(event.endTime)}</Text>
+
+      {user._id !== event.host._id && (
+          <View style={styles.actionRow}>
+            <EventActionButton
+              onPress={() => handleRSVP(event._id)}
+              icon={myRsvps.some(rsvp => rsvp._id === event._id) ? checkIcon : require('../assets/rsvp.png')}
+              text={myRsvps.some(rsvp => rsvp._id === event._id) ? 'Attending' : 'RSVP'}
+            />
+
+            {!myRsvps.some(rsvp => rsvp._id === event._id) && (
+              <EventActionButton
+                onPress={handleInterested}
+                icon={myInterested.some(interested => interested._id === event._id) ? checkIcon : plusIcon}
+                text="Interested"
+              />
+            )}
+          </View>
+        )}
     </View>
   );
 };
@@ -278,6 +278,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 8,
+  },
+  tags: {
+    marginTop: 12
   },
   swiper: {
     height: hp('100%'),
@@ -311,6 +314,11 @@ const styles = StyleSheet.create({
   hostUsername: {
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  actionRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 12
   }
 });
 

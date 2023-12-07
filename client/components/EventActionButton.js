@@ -12,9 +12,15 @@ const EventActionButton = ({ onPress, icon, text }) => {
 };
 
 const styles = StyleSheet.create({
+  button: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
   icon: {
     width: 24,
     height: 24,
+    marginRight: 8
   },
 });
 

@@ -44,24 +44,7 @@ const EventDetails = ({ route }) => {
 
     }
 
-    const renderTags = () => {
-        return (
-            <View style={styles.tagContainer}>
-                <Text style={styles.headerText}>Tags</Text>
-                <View style={styles.tagList}>
-                    {event.tags && event.tags.length > 0 ? (
-                        event.tags.map((tag, index) => (
-                            <Text key={index} style={styles.tag}>
-                                {tag}
-                            </Text>
-                        ))
-                    ) : (
-                        <Text>No tags available</Text>
-                    )}
-                </View>
-            </View>
-        );
-    };
+
 
     if (isLoading) {
         // Display a loading indicator while the data is being fetched
@@ -76,14 +59,12 @@ const EventDetails = ({ route }) => {
     return (
         <FlatList
             style={styles.container}
-            data={[{ key: 'pictures' }, { key: 'eventInfo' }, { key: 'rsvps' }, { key: 'interested' }, { key: 'tags' }]}
+            data={[{ key: 'pictures' }, { key: 'eventInfo' }, { key: 'rsvps' }, { key: 'interested' }]}
             renderItem={({ item }) => {
                 switch (item.key) {
-                    case 'tags':
-                        return renderTags(); // Render tags after EventInfo
                     case 'pictures':
                         return <EventPictures pictures={event.pictures} />;
-                    
+
                     case 'eventInfo':
                         return hostData ? (
                             <>
@@ -106,6 +87,7 @@ const EventDetails = ({ route }) => {
                         return rsvps ? <RSVPList rsvps={rsvps} /> : null;
                     case 'interested':
                         return interested ? <InterestedList interested={interested} /> : null;
+                    
                     default:
                         return null;
                 }
@@ -190,20 +172,6 @@ const styles = StyleSheet.create({
         padding: 10,
         marginBottom: 10,
         borderRadius: 5,
-    },
-    tagContainer: {
-        marginBottom: 20,
-    },
-    tagList: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-    },
-    tag: {
-        backgroundColor: '#ddd',
-        padding: 5,
-        borderRadius: 8,
-        marginRight: 5,
-        marginBottom: 5,
     },
     editIcon: {
         height: 25,

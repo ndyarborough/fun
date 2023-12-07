@@ -7,6 +7,9 @@ import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
+import PreferencesIcon from '../assets/settings.png';
+import SignOutIcon from '../assets/arrow.png';
+import MessageIcon from '../assets/message.png';
 
 import userApi from '../api/userApi';
 
@@ -24,7 +27,7 @@ const ProfileBanner = ({ notMe, randomUserId }) => {
                 setProfileImage({ uri: randomUserData.profilePic })
             }
             fetchRandomUserData();
-            
+
         } else {
             setProfileImage({ uri: user.profilePic })
         }
@@ -46,7 +49,7 @@ const ProfileBanner = ({ notMe, randomUserId }) => {
         navigation.navigate('Send Message', {
             senderId: user._id,
             receiverId: randomUserId,
-          });
+        });
     }
 
     const handlePickImage = async () => {
@@ -76,25 +79,6 @@ const ProfileBanner = ({ notMe, randomUserId }) => {
     return (
         <ImageBackground source={require('../assets/profile-background.webp')} style={styles.banner}>
 
-
-            {notMe ?
-                <View style={styles.userButtons}>
-                    <Pressable style={styles.button1} onPress={handleMessage}>
-                        <Text style={styles.text}>Send Message</Text>
-                    </Pressable>
-                </View>
-                :
-                <View style={styles.userButtons}>
-                    <Pressable style={styles.button1} onPress={handlePreferences}>
-                        <Text style={styles.text}>Preferences</Text>
-                    </Pressable>
-
-                    <Pressable style={styles.button2} onPress={handleLogOut}>
-                        <Text style={styles.text}>Sign Out</Text>
-                    </Pressable>
-                </View>
-            }
-
             {notMe ?
                 <Pressable onPress={handlePickImage} style={styles.profileContainer}>
                     {randomUser ? (
@@ -118,6 +102,27 @@ const ProfileBanner = ({ notMe, randomUserId }) => {
                 :
                 <Text style={styles.fullName}>{user.username}</Text>
             }
+
+            {notMe ?
+                <View style={styles.userButtons}>
+                    <Pressable style={styles.button} onPress={handleMessage}>
+                        <Image style={styles.icon} source={MessageIcon}></Image>
+                        <Text style={styles.text}>Send Message</Text>
+                    </Pressable>
+                </View>
+                :
+                <View style={styles.userButtons}>
+                    <Pressable style={styles.button} onPress={handlePreferences}>
+                        <Image style={styles.icon} source={PreferencesIcon}></Image>
+                        <Text style={styles.text}>Preferences</Text>
+                    </Pressable>
+
+                    <Pressable style={styles.button} onPress={handleLogOut}>
+                        <Image style={styles.icon} source={SignOutIcon}></Image>
+                        <Text style={styles.text}>Sign Out</Text>
+                    </Pressable>
+                </View>
+            }
         </ImageBackground>
     );
 };
@@ -128,7 +133,7 @@ const styles = StyleSheet.create({
         minHeight: hp('33%'),
         alignItems: 'center',
         justifyContent: 'flex-end',
-        paddingBottom: hp('4%'),
+        paddingBottom: hp('2%'),
         marginBottom: hp('1%')
     },
     profileContainer: {
@@ -136,6 +141,7 @@ const styles = StyleSheet.create({
         height: 150,
         borderRadius: 75,
         overflow: 'hidden',
+        marginTop: 12
     },
     profilePlacholder: {
         width: 150,
@@ -155,28 +161,27 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-around',
         width: '100%',
+        marginTop: hp('2%')
     },
-    button1: {
-        backgroundColor: '#aaa', // Change the background color as needed
+    button: {
+        backgroundColor: '#fff', // Change the background color as needed
         padding: 10,
         borderRadius: 5,
         alignItems: 'center',
-        width: '30%',
+        flexDirection: 'row',
+        border: '2px solid white', // Add white border
     },
-    button2: {
-        backgroundColor: '#aaa', // Change the background color as needed
-        padding: 10,
-        borderRadius: 5,
-        alignItems: 'center',
-
-        width: '30%',
-    },
-
     text: {
-        color: 'white', // Change the text color as needed
-        fontSize: 16,
+        color: 'black', // Change the text color as needed
+        fontSize: 12,
         fontWeight: 'bold',
     },
+    icon: {
+        height: 20,
+        width: 20,
+        marginRight: 8,
+    },
+    
 });
 
 export default ProfileBanner;

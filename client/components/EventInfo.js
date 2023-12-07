@@ -6,8 +6,8 @@ import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 
 const EventInfo = ({ event, hostData }) => {
 
-  const { getCurrentUser } = useAppContext();
-  
+    const { getCurrentUser } = useAppContext();
+
     const formatDate = (dateString) => {
         return new Date(dateString).toLocaleDateString();
     };
@@ -23,6 +23,20 @@ const EventInfo = ({ event, hostData }) => {
     return (
         <View style={styles.container}>
             <Text style={styles.headerText}>{event.eventName}</Text>
+
+            <View style={styles.tagContainer}>
+                <View style={styles.tagList}>
+                    {event.tags && event.tags.length > 0 ? (
+                        event.tags.map((tag, index) => (
+                            <Text key={index} style={styles.tag}>
+                                {tag}
+                            </Text>
+                        ))
+                    ) : (
+                        <Text>No tags available</Text>
+                    )}
+                </View>
+            </View>
 
             <View style={styles.row}>
                 <Text style={styles.label}>Date:</Text>
@@ -103,6 +117,19 @@ const styles = StyleSheet.create({
         width: 20,
         height: 20,
         marginLeft: 5,
+    },
+    tagContainer: {
+        marginBottom: 20,
+    },
+    tagList: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+    },
+    tag: {
+        backgroundColor: '#ddd',
+        padding: 5,
+        borderRadius: 8,
+        marginRight: 5,
     },
 });
 
