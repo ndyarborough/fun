@@ -39,13 +39,6 @@ const EventDetails = ({ route }) => {
         fetchData();
     }, [event.host, event._id]);
 
-    const handleEditPress = () => {
-        navigation.navigate('Edit Event', { event })
-
-    }
-
-
-
     if (isLoading) {
         // Display a loading indicator while the data is being fetched
         return (
@@ -64,25 +57,8 @@ const EventDetails = ({ route }) => {
                 switch (item.key) {
                     case 'pictures':
                         return <EventPictures pictures={event.pictures} />;
-
                     case 'eventInfo':
-                        return hostData ? (
-                            <>
-                                <EventInfo event={event} hostData={hostData} />
-                                {event.host._id === user._id && (
-                                    <Pressable
-                                        style={styles.editIconContainer}
-                                        onPress={handleEditPress}
-                                    >
-                                        <Text>Edit Event</Text>
-                                        <Image
-                                            source={require('../assets/edit.png')}
-                                            style={styles.editIcon}
-                                        />
-                                    </Pressable>
-                                )}
-                            </>
-                        ) : null;
+                        return hostData ? <EventInfo event={event} hostData={hostData} /> : null;
                     case 'rsvps':
                         return rsvps ? <RSVPList rsvps={rsvps} /> : null;
                     case 'interested':
@@ -173,10 +149,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         borderRadius: 5,
     },
-    editIcon: {
-        height: 25,
-        width: 25
-    }
+    
 });
 
 export default EventDetails;

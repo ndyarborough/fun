@@ -139,6 +139,10 @@ const EventCard = ({ event }) => {
     }
   }
 
+  const handleEditPress = () => {
+    navigation.navigate('Edit Event', { event })
+  }
+
   const renderDeleteButton = () => {
     if (user._id === event.host._id) {
       // If the user is the host
@@ -148,17 +152,19 @@ const EventCard = ({ event }) => {
           <EventActionButton
             onPress={handleReactivate}
             icon={require('../assets/reactivate.png')}
-            text={`Reactivate Event (${event.status})`}
+            text={`Repost`}
           />
         );
       } else if (event.rsvps.length > 0 || event.interested.length > 0) {
         // Display "Cancel Event" button with a different icon
         return (
-          <EventActionButton
-            onPress={handleEventCancel}
-            icon={require('../assets/cancel.png')}
-            text={event.status === 'active' ? 'Cancel' : 'Reactivate'}
-          />
+          <>
+            <EventActionButton
+              onPress={handleEventCancel}
+              icon={require('../assets/cancel.png')}
+              text={event.status === 'active' ? 'Cancel' : 'Reactivate'}
+            />
+          </>
         );
       } else {
         // Display "Delete Event" button with the default icon
@@ -203,10 +209,10 @@ const EventCard = ({ event }) => {
 
   return (
     <View style={styles.card}>
-      
+
       <View style={styles.row}>
         {renderHostInfo()}
-        <EventActionButton onPress={handleViewDetails} icon={require('../assets/viewDetails.png')} text="View Details" />
+        <EventActionButton onPress={handleViewDetails} icon={require('../assets/viewDetails.png')} text="See more" />
         {renderDeleteButton()}
       </View>
       {event.pictures && event.pictures.length > 0 && (
@@ -237,24 +243,35 @@ const EventCard = ({ event }) => {
 
       <Text>{event.description}</Text>
       <Text style={styles.tags}>{localDate(event.date)} @ {localTime(event.startTime)} - {localTime(event.endTime)}</Text>
-
+      {event.host._id === user._id && (
+        <Pressable
+          style={styles.editIconContainer}
+          onPress={handleEditPress}
+        >
+          <Text>Edit</Text>
+          <Image
+            source={require('../assets/edit.png')}
+            style={styles.editIcon}
+          />
+        </Pressable>
+      )}
       {user._id !== event.host._id && (
-          <View style={styles.actionRow}>
-            <EventActionButton
-              onPress={() => handleRSVP(event._id)}
-              icon={myRsvps.some(rsvp => rsvp._id === event._id) ? checkIcon : require('../assets/rsvp.png')}
-              text={myRsvps.some(rsvp => rsvp._id === event._id) ? 'Attending' : 'RSVP'}
-            />
+        <View style={styles.actionRow}>
+          <EventActionButton
+            onPress={() => handleRSVP(event._id)}
+            icon={myRsvps.some(rsvp => rsvp._id === event._id) ? checkIcon : require('../assets/rsvp.png')}
+            text={myRsvps.some(rsvp => rsvp._id === event._id) ? 'Attending' : 'RSVP'}
+          />
 
-            {!myRsvps.some(rsvp => rsvp._id === event._id) && (
-              <EventActionButton
-                onPress={handleInterested}
-                icon={myInterested.some(interested => interested._id === event._id) ? checkIcon : plusIcon}
-                text="Interested"
-              />
-            )}
-          </View>
-        )}
+          {!myRsvps.some(rsvp => rsvp._id === event._id) && (
+            <EventActionButton
+              onPress={handleInterested}
+              icon={myInterested.some(interested => interested._id === event._id) ? checkIcon : plusIcon}
+              text="Interested"
+            />
+          )}
+        </View>
+      )}
     </View>
   );
 };
@@ -281,6 +298,17 @@ const styles = StyleSheet.create({
   },
   tags: {
     marginTop: 12
+  },
+  editIconContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginTop: 4,
+    alignItems: 'center'
+  },
+  editIcon: {
+    height: 25,
+    width: 25,
+    marginLeft: 8
   },
   swiper: {
     height: hp('100%'),

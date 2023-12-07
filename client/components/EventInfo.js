@@ -1,11 +1,12 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Image } from 'react-native';
 import UserWithOptions from './UserWithOptions';
 import { useAppContext } from './AppContext';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
+import { useNavigation } from '@react-navigation/native';
 
 const EventInfo = ({ event, hostData }) => {
-
+    const navigation = useNavigation();
     const { getCurrentUser } = useAppContext();
 
     const formatDate = (dateString) => {
@@ -20,10 +21,28 @@ const EventInfo = ({ event, hostData }) => {
         });
     };
 
+    const handleEditPress = () => {
+        navigation.navigate('Edit Event', { event })
+
+    }
+
     return (
         <View style={styles.container}>
-            <Text style={styles.headerText}>{event.eventName}</Text>
-
+            <View style={styles.row}>
+                <Text style={styles.headerText}>{event.eventName}</Text>
+                {event.host._id === getCurrentUser()._id && (
+                    <Pressable
+                        style={styles.editIconContainer}
+                        onPress={handleEditPress}
+                    >
+                        <Text>Edit Event</Text>
+                        <Image
+                            source={require('../assets/edit.png')}
+                            style={styles.editIcon}
+                        />
+                    </Pressable>
+                )}
+            </View>
             <View style={styles.tagContainer}>
                 <View style={styles.tagList}>
                     {event.tags && event.tags.length > 0 ? (
@@ -120,6 +139,16 @@ const styles = StyleSheet.create({
     },
     tagContainer: {
         marginBottom: 20,
+    },
+    editIconContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    editIcon: {
+        height: 25,
+        width: 25,
+        marginLeft: 8
     },
     tagList: {
         flexDirection: 'row',

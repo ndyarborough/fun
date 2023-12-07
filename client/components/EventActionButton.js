@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
   icon: {
     width: 24,
     height: 24,
-    marginRight: 8
+    marginRight: 3
   },
 });
 
