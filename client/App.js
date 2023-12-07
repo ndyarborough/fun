@@ -17,6 +17,7 @@ import EventDetails from './components/EventDetails';
 import Preferences from './components/Preferences';
 import SendMessageScreen from './components/SendMessageScreen';
 import Inbox from './components/Inbox';
+import ViewProfile from './components/ViewProfile';
 
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 const Stack = createStackNavigator();
@@ -36,6 +37,7 @@ const App = () => {
             <Stack.Screen name="Create Event">
               {(props) => <EventFormScreen {...props} />}
             </Stack.Screen>
+            <Stack.Screen name="View Profile" component={ViewProfile} />
             <Stack.Screen name="Login" component={LoginScreen} />
             <Stack.Screen name="Edit Event" component={EditEventForm} />
             <Stack.Screen name="Register" component={RegisterScreen} />

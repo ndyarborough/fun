@@ -177,8 +177,12 @@ const EventCard = ({ event }) => {
   const renderHostInfo = () => {
     return (
       <View style={styles.hostContainer}>
-        <Image source={{ uri: event.host.profilePic }} style={styles.hostProfilePic} />
-        <Text style={styles.hostUsername}>{event.host.username}</Text>
+        <Pressable onPress={handleProfilePress}>
+          <Image source={{ uri: event.host.profilePic }} style={styles.hostProfilePic} />
+        </Pressable>
+        <Pressable onPress={handleProfilePress}>
+          <Text style={styles.hostUsername}>{event.host.username}</Text>
+        </Pressable>
       </View>
     );
   };
@@ -188,6 +192,15 @@ const EventCard = ({ event }) => {
     }
     return null;
   };
+
+  const handleProfilePress = () => {
+    console.log('pressed a profile pic for: ', event.host.username)
+    if (user._id === event.host._id) {
+      navigation.navigate('Dashboard')
+    } else {
+      navigation.navigate('View Profile', { randomUser: event.host._id })
+    }
+  }
 
   return (
     <View style={styles.card}>

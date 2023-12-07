@@ -10,16 +10,25 @@ import * as ImageManipulator from 'expo-image-manipulator';
 
 import userApi from '../api/userApi';
 
-const ProfileBanner = () => {
+const ProfileBanner = ({ notMe, randomUserId }) => {
     const [profileImage, setProfileImage] = useState(null);
-
+    const [randomUser, setRandomUser] = useState(null);
     const { user, setLoggedIn } = useAppContext();
     const navigation = useNavigation();
 
     useEffect(() => {
-        if (user.profilePic) {
+        if (notMe) {
+            const fetchRandomUserData = async () => {
+                const randomUserData = await userApi.getUserInfo(randomUserId);
+                setRandomUser(randomUserData);
+                setProfileImage({ uri: randomUserData.profilePic })
+            }
+            fetchRandomUserData();
+            
+        } else {
             setProfileImage({ uri: user.profilePic })
         }
+
     }, [])
 
     const handleLogOut = async () => {
@@ -31,6 +40,14 @@ const ProfileBanner = () => {
 
     const handlePreferences = () => {
         navigation.navigate('Preferences');
+    }
+
+    const handleMessage = () => {
+        console.log('Send message to ', randomUserId);
+        navigation.navigate('Send Message', {
+            senderId: user._id,
+            receiverId: randomUserId,
+          });
     }
 
     const handlePickImage = async () => {
@@ -60,26 +77,48 @@ const ProfileBanner = () => {
     return (
         <ImageBackground source={require('../assets/profile-background.webp')} style={styles.banner}>
 
-            <View style={styles.userButtons}>
-                <Pressable style={styles.button1} onPress={handlePreferences}>
-                    <Text style={styles.text}>Preferences</Text>
+
+            {notMe ?
+                <View style={styles.userButtons}>
+                    <Pressable style={styles.button1} onPress={handleMessage}>
+                        <Text style={styles.text}>Send Message</Text>
+                    </Pressable>
+                </View>
+                :
+                <View style={styles.userButtons}>
+                    <Pressable style={styles.button1} onPress={handlePreferences}>
+                        <Text style={styles.text}>Preferences</Text>
+                    </Pressable>
+
+                    <Pressable style={styles.button2} onPress={handleLogOut}>
+                        <Text style={styles.text}>Sign Out</Text>
+                    </Pressable>
+                </View>
+            }
+
+            {notMe ?
+                <Pressable onPress={handlePickImage} style={styles.profileContainer}>
+                    {randomUser ? (
+                        <Image style={styles.profileImage} source={profileImage} />
+                    ) : (
+                        <Image style={styles.profilePlacholder} source={profilePlacholder} />
+                    )}
                 </Pressable>
-
-                <Pressable style={styles.button2} onPress={handleLogOut}>
-                    <Text style={styles.text}>Sign Out</Text>
+                :
+                <Pressable onPress={handlePickImage} style={styles.profileContainer}>
+                    {profileImage ? (
+                        <Image style={styles.profileImage} source={profileImage} />
+                    ) : (
+                        <Image style={styles.profilePlacholder} source={profilePlacholder} />
+                    )}
                 </Pressable>
-            </View>
+            }
 
-            <Pressable onPress={handlePickImage} style={styles.profileContainer}>
-                {profileImage ? (
-                    <Image style={styles.profileImage} source={profileImage} />
-                ) : (
-                    <Image style={styles.profilePlacholder} source={profilePlacholder} />
-                )}
-            </Pressable>
-
-
-            <Text style={styles.fullName}>{user.username}</Text>
+            {notMe && randomUser ?
+                <Text style={styles.fullName}>{randomUser.username}</Text>
+                :
+                <Text style={styles.fullName}>{user.username}</Text>
+            }
         </ImageBackground>
     );
 };
@@ -133,7 +172,7 @@ const styles = StyleSheet.create({
 
         width: '30%',
     },
-   
+
     text: {
         color: 'white', // Change the text color as needed
         fontSize: 16,

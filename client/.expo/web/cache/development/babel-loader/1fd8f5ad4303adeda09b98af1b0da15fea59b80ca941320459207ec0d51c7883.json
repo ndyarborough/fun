@@ -1,0 +1,1 @@
+{"ast":null,"code":"import Tags from \"./Tags\";\nexport default Tags;","map":{"version":3,"names":["Tags"],"sources":["C:/Users/dyarb/batcave/Meetup/client/node_modules/react-native-tags/index.js"],"sourcesContent":["import Tags from './Tags';\nexport default Tags;\n"],"mappings":"AAAA,OAAOA,IAAI;AACX,eAAeA,IAAI"},"metadata":{},"sourceType":"module","externalDependencies":[]}

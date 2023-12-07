@@ -27,6 +27,15 @@ const UserWithOptions = ({ randomUser, receiverId }) => {
     });
   };
 
+  const handleProfilePress = () => {
+    console.log('pressed a profile pic for: ', randomUser.username)
+    if(user._id === randomUser._id) {
+      navigation.navigate('Dashboard')
+    } else {
+      navigation.navigate('View Profile', {randomUser: randomUser._id})
+    }
+  }
+
   const handleBlock = async () => {
     try {
       const blockAttempt = await userApi.blockUser(user._id, receiverId);
@@ -44,9 +53,17 @@ const UserWithOptions = ({ randomUser, receiverId }) => {
   return (
     <View style={styles.userContainer}>
       {randomUser.profilePic && (
-        <Image source={{ uri: randomUser.profilePic }} style={styles.profilePic} />
+        <Pressable onPress={handleProfilePress}>
+          <Image 
+          source={{ uri: randomUser.profilePic }} 
+          style={styles.profilePic} 
+          />
+        </Pressable>
+        
       )}
-      <Text style={styles.username}>{randomUser.username}</Text>
+      <Pressable onPress={handleProfilePress}>
+        <Text style={styles.username}>{randomUser.username}</Text>
+      </Pressable>
       <View style={styles.buttonsContainer}>
         <Pressable onPress={handlePressMessage}>
           <Image source={require('../assets/message.png')} style={styles.icon} />

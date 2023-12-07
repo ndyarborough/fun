@@ -1,16 +1,20 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { View, StyleSheet, Text, Image } from 'react-native';
+import { View, StyleSheet, Text, Image, Pressable } from 'react-native';
 import { GiftedChat, InputToolbar, Composer, Send, Bubble } from 'react-native-gifted-chat';
 import messageApi from '../api/messageApi';
 import { MaterialIcons } from '@expo/vector-icons'; // Import the desired icon library
 import userApi from '../api/userApi';
-// import CustomMessage from './CustomMessage'; // Import the CustomMessage component
+import { useAppContext } from './AppContext';
+import { useNavigation } from '@react-navigation/native';
 
 const SendMessageScreen = ({ route }) => {
+  const navigation = useNavigation();
+
   const { senderId, receiverId } = route.params;
   const [messages, setMessages] = useState([]);
   const [receiver, setReceiver] = useState(null);
-  const [sender, setSender] = useState(null)
+  const [sender, setSender] = useState(null);
+  const {user} = useAppContext();
 
   useEffect(() => {
     const loadMessageHistory = async () => {
@@ -37,9 +41,17 @@ const SendMessageScreen = ({ route }) => {
         console.error('Error loading message history:', error);
       }
     };
-
     loadMessageHistory();
   }, [senderId, receiverId]);
+
+  const handleProfilePress = () => {
+    console.log('pressed a profile pic for: ', receiver.username)
+    if(user._id === receiver._id) {
+      navigation.navigate('Dashboard')
+    } else {
+      navigation.navigate('View Profile', {randomUser: receiver._id})
+    }
+  }
 
   const onSend = useCallback(async (newMessages = []) => {
     const message = newMessages[0];
@@ -68,32 +80,32 @@ const SendMessageScreen = ({ route }) => {
 
   const renderBubble = (props) => {
     const { currentMessage, previousMessage } = props;
-  
+
     // Check if the message position is 'left' (receiver's message)
     if (currentMessage.position === 'left') {
       // Check if the previous message is from the same user
       const isSameUser = previousMessage
         && previousMessage.user
         && previousMessage.user._id === currentMessage.user._id;
-  
+
       // If it's the same user, don't render the avatar again
       if (isSameUser) {
         return <Bubble {...props} />;
       }
-  
+
       return (
         <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
           {/* Display the receiver's profile image */}
-        
+
           <Bubble {...props} />
         </View>
       );
     }
-  
+
     // For messages from the sender (on the right), only display the message bubble
     return <Bubble {...props} />;
   };
-  
+
 
   const renderSend = (props) => (
     <Send {...props}>
@@ -106,9 +118,11 @@ const SendMessageScreen = ({ route }) => {
   return (
     <View style={styles.container}>
       {receiver && (
-        <View style={styles.receiverContainer}>
-          <Image source={{ uri: receiver.profilePic }} style={styles.profilePic} />
-          <Text>{receiver.username}</Text>
+        <View>
+          <Pressable style={styles.receiverContainer} onPress={handleProfilePress}>
+            <Image source={{ uri: receiver.profilePic }} style={styles.profilePic} />
+            <Text>{receiver.username}</Text>
+          </Pressable>
         </View>
       )}
       <GiftedChat
