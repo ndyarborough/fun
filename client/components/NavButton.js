@@ -28,8 +28,8 @@ const styles = StyleSheet.create({
       color: 'white',
     },
     icon: {
-      height: hp('7%'),
-      width: wp('15%')
+      height: 50,
+      width: 50
     }
   });
 

@@ -27,8 +27,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    backgroundColor: 'lightgray', // Customize the background color
-    height: hp('12%'), // Customize the height
+    paddingBottom: 12,
+    paddingTop: 12,
+    borderWidth: 1,
+    borderColor: 'black',
+    // backgroundColor: '#575b5e', // Customize the background color
+    height: hp('11%'), // Customize the height
     width: '100%', // Take up the full width of the screen
     position: 'fixed', // or 'absolute' based on your layout needs
     bottom: 0, // Position at the bottom of the screen
