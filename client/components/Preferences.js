@@ -80,7 +80,7 @@ const Preferences = () => {
                   <View style={styles.blockedUserContainer}>
                     <Text style={styles.username}>{item.username}</Text>
                     <Pressable onPress={() => handleUnblockUser(item._id)}>
-                      <Image source={require('../assets/delete.png')} style={styles.deleteIcon} />
+                      <Image source={require('../assets/delete.webp')} style={styles.deleteIcon} />
                     </Pressable>
                   </View>
                 )}

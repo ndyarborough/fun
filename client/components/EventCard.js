@@ -7,6 +7,7 @@ import { useAppContext } from './AppContext';
 import Toast from 'react-native-root-toast';
 import EventPictures from './EventPictures';
 import Modal from 'react-native-modal';
+import heartIcon from '../assets/heart.webp'
 import checkIcon from '../assets/check.png'
 import plusIcon from '../assets/plus.png';
 import EventActionButton from './EventActionButton';
@@ -171,8 +172,8 @@ const EventCard = ({ event }) => {
         return (
           <EventActionButton
             onPress={handleDelete}
-            icon={require('../assets/delete.png')}
-            text={`Delete`}
+            icon={require('../assets/delete.webp')}
+            text={``}
           />
         );
       }
@@ -212,7 +213,7 @@ const EventCard = ({ event }) => {
 
       <View style={styles.row}>
         {renderHostInfo()}
-        <EventActionButton onPress={handleViewDetails} icon={require('../assets/viewDetails.png')} text="See more" />
+        <EventActionButton onPress={handleViewDetails} icon={require('../assets/viewDetails.png')} text="Details" />
         {renderDeleteButton()}
       </View>
       {event.pictures && event.pictures.length > 0 && (
@@ -260,13 +261,13 @@ const EventCard = ({ event }) => {
           <EventActionButton
             onPress={() => handleRSVP(event._id)}
             icon={myRsvps.some(rsvp => rsvp._id === event._id) ? checkIcon : require('../assets/rsvp.png')}
-            text={myRsvps.some(rsvp => rsvp._id === event._id) ? 'Attending' : 'RSVP'}
+            text={myRsvps.some(rsvp => rsvp._id === event._id) ? 'Attending' : ''}
           />
 
           {!myRsvps.some(rsvp => rsvp._id === event._id) && (
             <EventActionButton
               onPress={handleInterested}
-              icon={myInterested.some(interested => interested._id === event._id) ? checkIcon : plusIcon}
+              icon={myInterested.some(interested => interested._id === event._id) ? heartIcon : plusIcon}
               text="Interested"
             />
           )}

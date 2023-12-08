@@ -28,10 +28,13 @@ const styles = StyleSheet.create({
     width: wp('75%')
   },
   tag: {
-    borderRadius: 8,
+    borderRadius: 15,
     backgroundColor: 'lightgray',
     elevation: 2,
-    padding: 16,
+    paddingTop: 8,
+    paddingBottom: 8,
+    paddingLeft: 7,
+    paddingRight: 7,
     shadowColor: '#000',
     shadowOffset: {
         width: 0,

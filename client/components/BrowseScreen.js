@@ -58,7 +58,6 @@ const BrowseScreen = () => {
           }}
         >
           <Text style={styles.buttonText}>Create Event</Text>
-          <Image source={PlusIcon} style={styles.plusIcon} />
         </TouchableOpacity>
         <ActivityIndicator size="large" color="#000000" />
         <Text style={styles.loadMessage}>Loading Events Near You</Text>
@@ -80,7 +79,6 @@ const BrowseScreen = () => {
         }}
       >
         <Text style={styles.buttonText}>Create Event</Text>
-        <Image source={PlusIcon} style={styles.plusIcon} />
       </TouchableOpacity>
 
       <ScrollView style={styles.scroll}>
