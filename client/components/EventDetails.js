@@ -49,7 +49,6 @@ const EventDetails = ({ route }) => {
     }
 
     return (
-        <>
         <FlatList
             style={styles.container}
             data={[{ key: 'pictures' }, { key: 'eventInfo' }, { key: 'rsvps' }, { key: 'interested' }]}
@@ -69,8 +68,6 @@ const EventDetails = ({ route }) => {
             }}
             keyExtractor={(item) => item.key}
         />
-       
-        </>
     );
 };
 
@@ -80,9 +77,10 @@ const EventDetails = ({ route }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingLeft: 10,
-        paddingRight: 10,
-        backgroundColor: '#fffffe'
+        marginLeft: wp('2.5%'),
+        marginRight: wp('2.5%'),
+        backgroundColor: '#fffffe',
+        width: wp('95%')
     },
     loadingContainer: {
         flex: 1,

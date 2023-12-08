@@ -142,6 +142,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     editIconContainer: {
+        marginRight: wp('2%'),
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center'
