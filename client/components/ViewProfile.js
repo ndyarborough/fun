@@ -113,6 +113,7 @@ const styles = StyleSheet.create({
     width: wp('90%'),
     marginLeft: wp('5%'),
     marginRight: wp('5%'),
+    paddingBottom: hp('10%')
   },
   sectionToggleContainer: {
     flexDirection: 'row',

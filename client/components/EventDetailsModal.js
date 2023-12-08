@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
   modalContent: {
     backgroundColor: 'white',
     padding: 16,
-    borderRadius: 8,
+    borderRadius: 15,
   },
   imageContainer: {
     marginBottom: 16,

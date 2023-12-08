@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
   image: {
     height: hp('30%'), // Adjust the height to match the Swiper height
     width: wp('100%'), // Adjust the width to take the full width of the Swiper
-    borderRadius: 10,
+    borderRadius: 15,
   },
   imageTracker: {
     position: 'absolute',

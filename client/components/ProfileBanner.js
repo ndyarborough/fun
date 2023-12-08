@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
     button: {
         backgroundColor: '#fff', // Change the background color as needed
         padding: 10,
-        borderRadius: 5,
+        borderRadius: 15,
         alignItems: 'center',
         flexDirection: 'row',
         border: '2px solid white', // Add white border

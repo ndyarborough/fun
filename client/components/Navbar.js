@@ -5,46 +5,44 @@ import NavButton from './NavButton';
 import { useAppContext } from './AppContext';
 import { useNavigation } from '@react-navigation/native';
 
-import BrowseIcon from '../assets/browse.png';
-import DashboardIcon from '../assets/dashboard.png';
-import MessageIcon from '../assets/message.png';
+import BrowseIcon from '../assets/dashboard.webp';
+import DashboardIcon from '../assets/home.webp';
+import MessageIcon from '../assets/message.webp';
 
 import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 const Navbar = () => {
-  const { loggedIn, user } = useAppContext();
-  const { navigate, state } = useNavigation();
-
-  // Check if state is available before accessing routeName
-  const isActive = (routeName) => state && state.routeName === routeName;
+  const { loggedIn, user, activeScreen } = useAppContext();
 
   return (
     <View style={[styles.container, !loggedIn && styles.hidden]}>
-      <NavButton
-        title="Dashboard"
-        to="Dashboard"
-        user={user}
-        icon={DashboardIcon}
-        isActive={isActive('Dashboard')}
-        onPress={navigate}
-      />
-      <NavButton
-        title="Events"
-        to="Events"
-        user={user}
-        icon={BrowseIcon}
-        isActive={isActive('Events')}
-        onPress={navigate}
-      />
-      <NavButton
-        title="Messages"
-        to="Inbox"
-        user={user}
-        icon={MessageIcon}
-        isActive={isActive('Inbox')}
-        onPress={navigate}
-      />
-      {/* Add more NavButton components for additional screens */}
+      <View style={styles.barContainer}>
+        <View style={[styles.bar, activeScreen === 'Dashboard' && styles.activeBar]} />
+        <NavButton
+          title="Dashboard"
+          to="Dashboard"
+          user={user}
+          icon={DashboardIcon}
+        />
+      </View>
+      <View style={styles.barContainer}>
+        <View style={[styles.bar, activeScreen === 'Events' && styles.activeBar]} />
+        <NavButton
+          title="Events"
+          to="Events"
+          user={user}
+          icon={BrowseIcon}
+        />
+      </View>
+      <View style={styles.barContainer}>
+        <View style={[styles.bar, activeScreen === 'Messages' && styles.activeBar]} />
+        <NavButton
+          title="Messages"
+          to="Inbox"
+          user={user}
+          icon={MessageIcon}
+        />
+      </View>
     </View>
   );
 };
@@ -54,15 +52,24 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     backgroundColor: '#fff',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'black',
     height: hp('10%'),
     width: '100%',
     position: 'absolute',
     bottom: 0,
     paddingBottom: Platform.OS === 'android' ? 3 : 18,
-    paddingTop: 8
+  },
+  barContainer: {
+    alignItems: 'center',
+  },
+  bar: {
+    width: 35, // Adjust the width of the bar
+    height: 6, // Adjust the height of the bar (thicker)
+    borderRadius: 15,
+    backgroundColor: 'transparent',
+    marginBottom: 8
+  },
+  activeBar: {
+    backgroundColor: 'orange', // Set the color of the active bar
   },
   hidden: {
     display: 'none',

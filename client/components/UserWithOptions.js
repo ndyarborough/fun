@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     justifyContent: 'space-between', // Align items to the start and buttons to the end
     borderWidth: 1,
-    borderRadius: 12,
+    borderRadius: 15,
     padding: 8,
     flex: 1,
     marginBottom: 7,
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
   profilePic: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: 15,
     marginRight: 10,
   },
   username: {

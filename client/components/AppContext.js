@@ -10,6 +10,7 @@ export const AppProvider = ({ children }) => {
   const [myInterested, setMyInterested] = useState(null);
   const [browseEvents, setBrowseEvents] = useState([]);
   const [user, setUser] = useState(null);
+  const [activeScreen, setActiveScreen] = useState(null);
 
   const getCurrentUser = () => {
     return user;
@@ -28,7 +29,9 @@ export const AppProvider = ({ children }) => {
     setUser,
     getCurrentUser,
     myInterested,
-    setMyInterested
+    setMyInterested,
+    activeScreen,
+    setActiveScreen
   };
 
   return <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>;

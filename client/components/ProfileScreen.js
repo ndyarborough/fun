@@ -135,6 +135,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginBottom: hp('1%'),
+    backgroundColor: '#fffffe'
   },
   loadingContainer: {
     flex: 1,
@@ -153,6 +154,7 @@ const styles = StyleSheet.create({
     width: wp('90%'),
     marginLeft: wp('5%'),
     marginRight: wp('5%'),
+    paddingBottom: hp('10%')
   },
   sectionToggleContainer: {
     flexDirection: 'row',

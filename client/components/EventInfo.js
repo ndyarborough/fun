@@ -107,6 +107,7 @@ const styles = StyleSheet.create({
     container: {
         flex: .6,
     },
+
     headerText: {
         fontSize: 18,
         fontWeight: 'bold',
@@ -155,9 +156,21 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
     },
     tag: {
-        backgroundColor: '#ddd',
-        padding: 5,
         borderRadius: 8,
+        backgroundColor: 'lightgray',
+        elevation: 2,
+        padding: 16,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        overflow: 'hidden', // This ensures that the border-radius is applied correctly
+        borderWidth: 1,
+        borderColor: 'transparent', // Set border color to transparent for no color
+        padding: 5,
         marginRight: 5,
     },
 });

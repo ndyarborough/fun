@@ -71,7 +71,7 @@ const BrowseScreen = () => {
     <View style={styles.container}>
       <View style={styles.filterContainer}>
         <CustomSearchBar search={search} updateSearch={setSearch} />
-        <Filters />
+        {/* <Filters /> */}
       </View>
       <TouchableOpacity
         style={styles.buttonContainer}
@@ -101,6 +101,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingBottom: hp('10%'),
+    backgroundColor: '#fffffe',
   },
   loadingContainer: {
     flex: 1,
@@ -124,7 +126,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderRadius: 12,
+    borderRadius: 15,
     padding: 8,
     backgroundColor: 'black',
     margin: 10,

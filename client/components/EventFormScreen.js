@@ -19,7 +19,7 @@ const EventFormScreen = () => {
   const [description, setDescription] = useState('');
   const [date, setDate] = useState(new Date());
   const [startTime, setStartTime] = useState(new Date(0, 0, 0, 12, 0)); // Initialize to 12:00 PM
-  const [endTime, setEndTime] = useState(new Date(0, 0, 0, 13, 0)); // Initi
+  const [endTime, setEndTime] = useState(new Date(0, 0, 0, 13, 0)); // Initialize to 1:00 PM
   const [capacity, setCapacity] = useState('');
   const [address, setAddress] = useState('');
   const [images, setImages] = useState(null);
@@ -196,6 +196,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     justifyContent: 'space-between', // Align children with space in between
+    backgroundColor: '#fffffe'
   },
   dateContainer: {
     flexDirection: 'row',

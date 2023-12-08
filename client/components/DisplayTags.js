@@ -28,10 +28,23 @@ const styles = StyleSheet.create({
     width: wp('75%')
   },
   tag: {
-    padding: 8,
-    margin: 4,
     borderRadius: 8,
-  },
+    backgroundColor: 'lightgray',
+    elevation: 2,
+    padding: 16,
+    shadowColor: '#000',
+    shadowOffset: {
+        width: 0,
+        height: 2,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    overflow: 'hidden', // This ensures that the border-radius is applied correctly
+    borderWidth: 1,
+    borderColor: 'transparent', // Set border color to transparent for no color
+    padding: 5,
+    marginRight: 5,
+},
 });
 
 export default DisplayTags;

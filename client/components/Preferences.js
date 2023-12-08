@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
   saveButton: {
     backgroundColor: 'blue',
     padding: 10,
-    borderRadius: 5,
+    borderRadius: 15,
     alignItems: 'center',
     marginTop: 16,
   },
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
   },
   blockButtonText: {
     backgroundColor: 'blue',
-    borderRadius: 5,
+    borderRadius: 15,
     padding: 2,
     color: 'white',
   },
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
     padding: 10,
     marginBottom: 10,
-    borderRadius: 5,
+    borderRadius: 15,
   },
   username: {
     fontSize: 16,

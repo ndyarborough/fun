@@ -3,12 +3,12 @@ import { View, Text, FlatList, StyleSheet } from 'react-native';
 import UserWithOptions from './UserWithOptions';
 import userApi from '../api/userApi';
 import { useAppContext } from './AppContext';
-
+import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
 const InterestedList = ({ interested }) => {
   const { getCurrentUser } = useAppContext();
 
   return (
-    <View>
+    <View style={styles.container}>
       
       <Text style={styles.headerText}>Interested:</Text>
       {interested ? (
@@ -31,6 +31,9 @@ const InterestedList = ({ interested }) => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    paddingBottom: hp('10%')
+  },
   headerText: {
     fontSize: 18,
     fontWeight: 'bold',

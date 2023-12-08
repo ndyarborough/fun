@@ -281,10 +281,18 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: 'white',
     padding: 16,
-    borderRadius: 8,
+    borderRadius: 15,
     margin: 8,
     elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
   },
+  
   title: {
     fontSize: 18,
     fontWeight: 'bold',
@@ -316,12 +324,12 @@ const styles = StyleSheet.create({
   image: {
     height: '100%',
     width: wp('100%'),
-    borderRadius: 8,
+    borderRadius: 15,
   },
   modalContent: {
     backgroundColor: 'white',
     padding: 16,
-    borderRadius: 8,
+    borderRadius: 15,
   },
   modalButtons: {
     flexDirection: 'row',
@@ -336,7 +344,7 @@ const styles = StyleSheet.create({
   hostProfilePic: {
     width: 30,
     height: 30,
-    borderRadius: 15,
+    borderRadius: 155,
     marginRight: 8,
   },
   hostUsername: {

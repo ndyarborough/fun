@@ -200,6 +200,7 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 20,
         justifyContent: 'space-between', // Align children with space in between
+        backgroundColor: '#fffffe'
     },
     dateContainer: {
         flexDirection: 'row',

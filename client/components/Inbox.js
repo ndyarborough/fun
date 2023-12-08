@@ -3,6 +3,7 @@ import { View, FlatList, TouchableOpacity, Text, StyleSheet, ActivityIndicator, 
 import messageApi from '../api/messageApi';
 import { useAppContext } from './AppContext';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 const Inbox = () => {
   const navigation = useNavigation();
@@ -106,6 +107,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    paddingBottom: hp('10%'),
+    backgroundColor: '#fffffe'
   },
   loadingContainer: {
     flex: 1,

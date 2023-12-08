@@ -8,7 +8,7 @@ const CustomSearchBar = ({ search, updateSearch }) => {
       placeholder="Search events or tags..."
       onChangeText={updateSearch}
       value={search}
-      containerStyle={{ width: wp('100%') }}
+      containerStyle={{ width: wp('90%'), borderRadius: 15, marginLeft: wp('5%'), marginRight: wp('5%'), marginTop: 2 }}
     />
   );
 };

@@ -6,6 +6,7 @@ import { MaterialIcons } from '@expo/vector-icons'; // Import the desired icon l
 import userApi from '../api/userApi';
 import { useAppContext } from './AppContext';
 import { useNavigation } from '@react-navigation/native';
+import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 const SendMessageScreen = ({ route }) => {
   const navigation = useNavigation();
@@ -156,12 +157,14 @@ const SendMessageScreen = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingBottom: hp('10%'),
+    backgroundColor: '#fffffe'
   },
   sendButton: {
     marginRight: 10,
     marginBottom: 5,
     backgroundColor: '#007AFF',
-    borderRadius: 5,
+    borderRadius: 15,
     paddingVertical: 5,
     paddingHorizontal: 10,
   },

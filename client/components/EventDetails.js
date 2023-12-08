@@ -21,7 +21,6 @@ const EventDetails = ({ route }) => {
     const { user } = useAppContext();
 
     useEffect(() => {
-
         const fetchData = async () => {
             try {
                 const host = await userApi.getUserInfo(event.host._id);
@@ -50,6 +49,7 @@ const EventDetails = ({ route }) => {
     }
 
     return (
+        <>
         <FlatList
             style={styles.container}
             data={[{ key: 'pictures' }, { key: 'eventInfo' }, { key: 'rsvps' }, { key: 'interested' }]}
@@ -63,13 +63,14 @@ const EventDetails = ({ route }) => {
                         return rsvps ? <RSVPList rsvps={rsvps} /> : null;
                     case 'interested':
                         return interested ? <InterestedList interested={interested} /> : null;
-                    
                     default:
                         return null;
                 }
             }}
             keyExtractor={(item) => item.key}
         />
+       
+        </>
     );
 };
 
@@ -81,6 +82,7 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingLeft: 10,
         paddingRight: 10,
+        backgroundColor: '#fffffe'
     },
     loadingContainer: {
         flex: 1,
@@ -122,7 +124,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         borderWidth: 1,
-        borderRadius: 12,
+        borderRadius: 15,
         padding: 8,
         flex: .6,
     },
@@ -147,7 +149,7 @@ const styles = StyleSheet.create({
         borderColor: '#ddd',
         padding: 10,
         marginBottom: 10,
-        borderRadius: 5,
+        borderRadius: 15,
     },
     
 });
