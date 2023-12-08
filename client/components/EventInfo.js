@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Pressable, Image } from 'react-native';
 import UserWithOptions from './UserWithOptions';
 import { useAppContext } from './AppContext';
-import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
+import { heightPercentageToDP, widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import { useNavigation } from '@react-navigation/native';
 
 const EventInfo = ({ event, hostData }) => {
@@ -23,7 +23,6 @@ const EventInfo = ({ event, hostData }) => {
 
     const handleEditPress = () => {
         navigation.navigate('Edit Event', { event })
-
     }
 
     return (
@@ -42,19 +41,6 @@ const EventInfo = ({ event, hostData }) => {
                         />
                     </Pressable>
                 )}
-            </View>
-            <View style={styles.tagContainer}>
-                <View style={styles.tagList}>
-                    {event.tags && event.tags.length > 0 ? (
-                        event.tags.map((tag, index) => (
-                            <Text key={index} style={styles.tag}>
-                                {tag}
-                            </Text>
-                        ))
-                    ) : (
-                        <Text>No tags available</Text>
-                    )}
-                </View>
             </View>
 
             <View style={styles.row}>
@@ -87,8 +73,8 @@ const EventInfo = ({ event, hostData }) => {
                 <Text style={styles.value}>{event.description}</Text>
             </View>
 
-            <Text style={styles.label}>Host:</Text>
             <View style={styles.hostContainer}>
+                <Text style={styles.hostLabel}>Host:</Text>
                 {hostData ? (
                     <UserWithOptions
                         randomUser={hostData}
@@ -105,18 +91,18 @@ const EventInfo = ({ event, hostData }) => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: .6,
+        flex: 1,
     },
 
     headerText: {
         fontSize: 18,
         fontWeight: 'bold',
-        marginBottom: 10,
+        marginTop: 10,
     },
     row: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginBottom: 10,
+        marginBottom: 5,
     },
     label: {
         fontWeight: 'bold',
@@ -138,13 +124,22 @@ const styles = StyleSheet.create({
         height: 20,
         marginLeft: 5,
     },
+    hostContainer: {
+        paddingTop: 20
+    },
+    hostLabel: {
+        fontWeight: 'bold',
+        fontSize: 18,
+        marginBottom: 10
+    },
     tagContainer: {
-        marginBottom: 20,
+        marginBottom: 10,
     },
     editIconContainer: {
-        marginRight: wp('2%'),
+        marginTop: 10,
+        marginRight: 8,
         flexDirection: 'row',
-        justifyContent: 'center',
+        // justifyContent: 'center',
         alignItems: 'center'
     },
     editIcon: {

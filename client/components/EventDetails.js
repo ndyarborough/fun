@@ -77,10 +77,10 @@ const EventDetails = ({ route }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        marginLeft: wp('2.5%'),
-        marginRight: wp('2.5%'),
+        paddingLeft: wp('2.5%'),
+        paddingRight: wp('2.5%'),
         backgroundColor: '#fffffe',
-        width: wp('95%')
+        width: wp('100%')
     },
     loadingContainer: {
         flex: 1,

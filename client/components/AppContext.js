@@ -10,7 +10,7 @@ export const AppProvider = ({ children }) => {
   const [myInterested, setMyInterested] = useState(null);
   const [browseEvents, setBrowseEvents] = useState([]);
   const [user, setUser] = useState(null);
-  const [activeScreen, setActiveScreen] = useState(null);
+  const [activeScreen, setActiveScreen] = useState('Dashboard');
 
   const getCurrentUser = () => {
     return user;
