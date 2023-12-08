@@ -1,7 +1,7 @@
 // App.js
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Platform, View } from 'react-native';
+import { StyleSheet, Platform, View, Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { AppProvider } from './components/AppContext';
@@ -18,35 +18,65 @@ import Preferences from './components/Preferences';
 import SendMessageScreen from './components/SendMessageScreen';
 import Inbox from './components/Inbox';
 import ViewProfile from './components/ViewProfile';
-
+import Logo from './assets/meetup-high-resolution-logo-black-transparent.png'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 const Stack = createStackNavigator();
 
 const App = () => {
+
+  const LogoComponent = () => (
+    <Image source={Logo} style={styles.logo} />
+  );
   return (
     <AppProvider>
       <NavigationContainer>
         <View style={styles.container}>
           <Stack.Navigator initialRouteName="Login">
-            <Stack.Screen name="Dashboard">
-              {(props) => <ProfileScreen {...props} />}
-            </Stack.Screen>
-            <Stack.Screen name="Events">
-              {(props) => <BrowseScreen {...props} />}
-            </Stack.Screen>
-            <Stack.Screen name="Create Event">
-              {(props) => <EventFormScreen {...props} />}
-            </Stack.Screen>
-            <Stack.Screen name="View Profile" component={ViewProfile} />
-            <Stack.Screen name="Login" component={LoginScreen} />
-            <Stack.Screen name="Edit Event" component={EditEventForm} />
-            <Stack.Screen name="Register" component={RegisterScreen} />
-            <Stack.Screen name="Event Details" component={EventDetails} />
-            <Stack.Screen name="Inbox" component={Inbox} />
-            <Stack.Screen name="Send Message" component={SendMessageScreen} />
-            <Stack.Screen name="Preferences">
-              {(props) => <Preferences {...props} />}
-            </Stack.Screen>
+            <Stack.Screen name="Dashboard" component={ProfileScreen} options={{
+              title: 'Dashboard',
+              headerRight: LogoComponent,
+            }} />
+
+            <Stack.Screen name="Events" component={BrowseScreen} options={{
+              title: 'Browse Events',
+              headerRight: LogoComponent,
+            }} />
+            <Stack.Screen name="Create Event" component={EventFormScreen} options={{
+              title: 'Create Event',
+              headerRight: LogoComponent,
+            }} />
+            <Stack.Screen name="View Profile" component={ViewProfile} options={{
+              title: 'Dashboard',
+              headerRight: LogoComponent,
+            }} />
+            <Stack.Screen name="Login" component={LoginScreen} options={{
+              title: 'Dashboard',
+              headerRight: LogoComponent,
+            }} />
+            <Stack.Screen name="Edit Event" component={EditEventForm} options={{
+              title: 'Dashboard',
+              headerRight: LogoComponent,
+            }} />
+            <Stack.Screen name="Register" component={RegisterScreen} options={{
+              title: 'Dashboard',
+              headerRight: LogoComponent,
+            }} />
+            <Stack.Screen name="Event Details" component={EventDetails} options={{
+              title: 'Dashboard',
+              headerRight: LogoComponent,
+            }} />
+            <Stack.Screen name="Inbox" component={Inbox} options={{
+              title: 'Dashboard',
+              headerRight: LogoComponent,
+            }} />
+            <Stack.Screen name="Send Message" component={SendMessageScreen} options={{
+              title: 'Dashboard',
+              headerRight: LogoComponent,
+            }} />
+            <Stack.Screen name="Preferences" component={Preferences} options={{
+              title: 'Dashboard',
+              headerRight: LogoComponent,
+            }} />
           </Stack.Navigator>
         </View>
 
@@ -62,6 +92,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     ...(Platform.OS === 'web' && { paddingBottom: hp('12%') }),
+  },
+  logo: {
+    width: 37, // Adjust the width as needed
+    height: 37, // Adjust the height as needed
+    marginRight: 40, // Adjust the margin as needed
+    marginBottom: 5, // Adjust the margin as needed
   },
 });
 
