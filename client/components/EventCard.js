@@ -9,7 +9,7 @@ import EventPictures from './EventPictures';
 import Modal from 'react-native-modal';
 import heartIcon from '../assets/heart.webp'
 import checkIcon from '../assets/check.png'
-import plusIcon from '../assets/plus.png';
+import heart1Icon from '../assets/heart_1.webp';
 import EventActionButton from './EventActionButton';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import DisplayTags from './DisplayTags';
@@ -267,7 +267,7 @@ const EventCard = ({ event }) => {
           {!myRsvps.some(rsvp => rsvp._id === event._id) && (
             <EventActionButton
               onPress={handleInterested}
-              icon={myInterested.some(interested => interested._id === event._id) ? heartIcon : plusIcon}
+              icon={myInterested.some(interested => interested._id === event._id) ? heartIcon : heart1Icon}
               text="Interested"
             />
           )}
