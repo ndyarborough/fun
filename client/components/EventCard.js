@@ -223,10 +223,7 @@ const EventCard = ({ event }) => {
       )}
 
       <Text style={styles.tags}>{renderTags()}</Text>
-
-      <View style={styles.row}>
-        <Text style={styles.title}>{event.eventName}</Text>
-      </View>
+      <Text style={styles.title}>{event.eventName}</Text>
 
       <Modal isVisible={isDeleteModalVisible} onBackdropPress={() => setDeleteModalVisible(false)}>
         <View style={styles.modalContent}>
@@ -242,8 +239,9 @@ const EventCard = ({ event }) => {
         </View>
       </Modal>
 
-      <Text>{event.description}</Text>
-      <Text style={styles.tags}>{localDate(event.date)} @ {localTime(event.startTime)} - {localTime(event.endTime)}</Text>
+      <Text>{localDate(event.date)} @ {localTime(event.startTime)} - {localTime(event.endTime)}</Text>
+      <Text style={styles.lilSpace}>{event.description}</Text>
+
       {event.host._id === user._id && (
         <Pressable
           style={styles.editIconContainer}
@@ -298,6 +296,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 8,
+    marginTop: 8,
+
+  },
+  lilSpace: {
+    marginTop: 6
   },
   row: {
     flexDirection: 'row',
