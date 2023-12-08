@@ -10,6 +10,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useAppContext } from './AppContext';
 import Tags from 'react-native-tags';
 import eventApi from '../api/eventApi';
+import { heightPercentageToDP } from 'react-native-responsive-screen';
 
 const EditEventForm = ({ route }) => {
     const navigation = useNavigation();
@@ -200,7 +201,7 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 20,
         justifyContent: 'space-between', // Align children with space in between
-        backgroundColor: '#fffffe'
+        backgroundColor: '#fffffe',
     },
     dateContainer: {
         flexDirection: 'row',
