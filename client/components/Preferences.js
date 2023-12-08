@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   saveButton: {
-    backgroundColor: 'blue',
+    backgroundColor: 'orange',
     padding: 10,
     borderRadius: 15,
     alignItems: 'center',
@@ -129,6 +129,7 @@ const styles = StyleSheet.create({
   },
   saveButtonText: {
     color: 'white',
+    fontWeight: 'bold',
     fontSize: 16,
   },
   blockButton: {
@@ -137,10 +138,11 @@ const styles = StyleSheet.create({
     right: 5,
   },
   blockButtonText: {
-    backgroundColor: 'blue',
+    backgroundColor: 'orange',
     borderRadius: 15,
     padding: 2,
     color: 'white',
+    fontWeight: 'bold',
   },
   blockedUserContainer: {
     flexDirection: 'row',

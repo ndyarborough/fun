@@ -121,23 +121,19 @@ const styles = StyleSheet.create({
     width: wp('95%'),
     maxWidth: 1000,
   },
+  
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
     borderRadius: 15,
     padding: 8,
-    backgroundColor: 'black',
+    backgroundColor: 'orange',
     margin: 10,
-    shadowColor: 'black',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.8,
-    shadowRadius: 4,
-    elevation: 5, // For Android
   },
   buttonText: {
     color: 'white',
+    fontWeight: 'bold',
     marginRight: 8,
   },
   plusIcon: {

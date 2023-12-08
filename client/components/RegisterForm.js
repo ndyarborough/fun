@@ -5,7 +5,7 @@ import FlexInput from './FlexInput';
 import SubmitButton from './SubmitButton';
 import { useNavigation } from '@react-navigation/native';
 import { useAppContext } from './AppContext'; // Import useAppContext hook
-
+import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import userApi from '../api/userApi';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -127,6 +127,7 @@ const RegisterForm = () => {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
+    width: wp('80%')
   },
   text: {
     fontSize: 16,
