@@ -94,8 +94,10 @@ const styles = StyleSheet.create({
     ...(Platform.OS === 'web' && { paddingBottom: hp('12%') }),
   },
   logo: {
-    width: 37, // Adjust the width as needed
-    height: 37, // Adjust the height as needed
+    ...(Platform.OS === 'android' ? { width: 40 } : { width: 35 }),
+    ...(Platform.OS === 'android' ? { height: 40 } : { height: 35 }),
+    ...(Platform.OS === 'android' ? { marginRight: 40 } : { marginRight: 40 }),
+    ...(Platform.OS === 'android' ? { marginBottom: 0 } : { marginBottom: 5 }),
     marginRight: 40, // Adjust the margin as needed
     marginBottom: 5, // Adjust the margin as needed
   },
