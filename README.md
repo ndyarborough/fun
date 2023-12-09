@@ -44,11 +44,11 @@ Follow these steps to set up and run the project on your local machine.
     ```bash
     touch .env
    ```
-    ***Open the code in your IDE***
+    ***Open the code in your IDE (this works for VS Code)***
    ```bash
     code .
    ```
-   ***Copy this into your ./.env file***
+   ***Copy this or your preferred hosting preferences into your ./.env file***
    ```env
     # .env
     DBHOST=localhost
@@ -84,7 +84,7 @@ Follow these steps to set up and run the project on your local machine.
 11. **Run the project:**
 
     ```bash
-    npm run web
+    npm start
     ```
 
 12. **Your default web browser should open, and you can start using the Meetup application.**
@@ -92,6 +92,13 @@ Follow these steps to set up and run the project on your local machine.
     ***Make your browser window narrow like this to simulate mobile***
 
     ![image](https://github.com/Ryanslep/Meetup/assets/26638981/d38add14-6806-4f76-93b8-bdac210c06bb)
+
+13. **Open/Download Expo go from the ios/android app store**
+
+14. **Scan the QR code with your phone's camera for ios or inside the expo app for android**
+
+
+<img width="305" alt="image" src="https://github.com/Ryanslep/Meetup/assets/26638981/1a4ed604-9943-4c83-b954-604da1ddfa1b">
 
 
 ## Contributing
