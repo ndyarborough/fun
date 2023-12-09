@@ -44,11 +44,11 @@ Follow these steps to set up and run the project on your local machine.
     ```bash
     touch .env
    ```
-    ***Open the code in your IDE***
+    ***Open the code in your IDE (this works for VS Code)***
    ```bash
     code .
    ```
-   ***Copy this into your ./.env file***
+   ***Copy this or your preferred hosting preferences into your ./.env file***
    ```env
     # .env
     DBHOST=localhost
