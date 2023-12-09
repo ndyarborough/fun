@@ -88,6 +88,13 @@ Follow these steps to set up and run the project on your local machine.
     ```
     ![Homepage](./expo.png)
 
+12. **Replace '192.168.1.11' with a the yellow section from your terminal ./client/utils/apiUtils.js**
+
+    ```js
+    export const apiBaseUrl = 'http://192.168.1.11:3000';
+    ```
+    ![Homepage](./metro.png)
+
 13. **Open/Download Expo Go from the iOS/Android app store**
 
 14. **Scan the QR code in your terminal that looks like the one above with your phone's camera for ios or inside the expo app for android**
