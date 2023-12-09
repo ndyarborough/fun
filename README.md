@@ -100,7 +100,9 @@ Follow these steps to set up and run the project on your local machine.
 14. **Scan the QR code in your terminal that looks like the one above with your phone's camera for ios or inside the expo app for android**
 
 15. **Click the project in your Expo Go app and enjoy**
+    
     ![Homepage](./go.webp)
+
 
 ## Contributing
 
