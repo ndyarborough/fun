@@ -81,9 +81,13 @@ router.get('/hello', async (req, res) => {
 router.get('/fetch/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;
-    const user = await User.findById(userId).populate("preferences").populate('blockedUsers');
+   console.log(userId)
+    // Convert userId to ObjectId
+    const userIdObject = new mongoose.Types.ObjectId(userId);
+    
+    const user = await User.findById(userIdObject);
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.json({ message: 'User not found' });
     }
 
     // Exclude sensitive information like the password before sending the user data
@@ -148,9 +152,12 @@ router.put('/update-user', async (req, res) => {
 
 // Route for user login
 router.post('/login', async (req, res) => {
+  console.log('attemptingn login');
+  
   const { username, password } = req.body;
 
   try {
+    
     const user = await User.findOne({ username }).populate("preferences");
 
     if (!user) {
@@ -175,15 +182,18 @@ router.get('/myEvents/:userId', async (req, res) => {
   const userId = req.params.userId;
 
   try {
-    // Find the user by ID
-    const user = await User.findById(userId);
 
+      // Convert userId to ObjectId
+      const userIdObject = new mongoose.Types.ObjectId(userId);
+    // Find the user by ID
+    const user = await User.findById(userIdObject);
+    
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
     // Retrieve events for the user
-    const userEvents = await Event.find({ host: userId }).populate('host');
+    const userEvents = await Event.find({ host: userIdObject }).populate('host');
 
     res.status(200).json(userEvents);
   } catch (error) {
@@ -196,6 +206,13 @@ router.get('/myRsvps/:userId', async (req, res) => {
   const userId = req.params.userId;
 
   try {
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: 'Invalid user ID' });
+    }
+
+    // Convert userId to ObjectId
+    const userIdObject = new mongoose.Types.ObjectId(userId);
+
     // Find the user by ID
     const user = await User.findById(userId);
 
@@ -217,6 +234,13 @@ router.get('/myInterested/:userId', async (req, res) => {
   const userId = req.params.userId;
 
   try {
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: 'Invalid user ID' });
+    }
+
+    // Convert userId to ObjectId
+    const userIdObject = new mongoose.Types.ObjectId(userId);
+
     // Find the user by ID
     const user = await User.findById(userId);
 

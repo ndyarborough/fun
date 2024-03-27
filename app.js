@@ -9,20 +9,31 @@ const port = process.env.PORT;
 // Initialize Express app
 const app = express();
 // Connect to MongoDB
-mongoose.connect(`mongodb://${process.env.DBHOST}:27017/meetup`, {
+// mongoose.connect(`mongodb://${process.env.DBHOST}:27017/meetup`, {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true,
+// }).then(res => {
+//   console.log('Database connected')
+//   // Start the Express server
+//   app.listen(port, () => {
+//     console.log(`Server is running on http://localhost:${port}`);
+//   })
+// }
+// ).catch(err => console.log(err));
+mongoose.connect(process.env.DBClusterString, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 }).then(res => {
   console.log('Database connected')
   // Start the Express server
   app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
+    console.log(`Server is running on http://pro:${port}`);
   })
 }
 ).catch(err => console.log(err));
 
 //enable cors
-app.use(cors({ origin: "*"}));
+app.use(cors('*'));
 
 // Middleware to parse JSON requests
 app.use(bodyParser.json({ limit: '10mb' })); // Adjust the limit as needed
