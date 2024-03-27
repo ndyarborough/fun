@@ -80,6 +80,7 @@ router.delete('/delete/:eventId/:userId', async (req, res) => {
 
 //Route for fetching event data
 router.get('/fetch', async (req, res) => {
+    console.log('fetching events')
     try{
         const events = await Event.find().populate('host');
         res.json(events);
