@@ -25,6 +25,7 @@ mongoose.connect(process.env.DBClusterString, {
   useUnifiedTopology: true,
 }).then(res => {
   console.log('Database connected')
+  console.log(res)
   // Start the Express server
   app.listen(port, () => {
     console.log(`Server is running on http://pro:${port}`);
