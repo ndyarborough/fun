@@ -8,27 +8,15 @@ const port = process.env.PORT;
 
 // Initialize Express app
 const app = express();
-// Connect to MongoDB
-// mongoose.connect(`mongodb://${process.env.DBHOST}:27017/meetup`, {
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true,
-// }).then(res => {
-//   console.log('Database connected')
-//   // Start the Express server
-//   app.listen(port, () => {
-//     console.log(`Server is running on http://localhost:${port}`);
-//   })
-// }
-// ).catch(err => console.log(err));
+
 mongoose.connect(process.env.DBClusterString, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 }).then(res => {
   console.log('Database connected')
-  console.log(res)
   // Start the Express server
   app.listen(port, () => {
-    console.log(`Server is running on http://pro:${port}`);
+    console.log(`Server is running on port:${port}`);
   })
 }
 ).catch(err => console.log(err));
