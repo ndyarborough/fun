@@ -41,34 +41,28 @@ router.post('/register/:username/:email/:password/:fullName', async (req, res) =
   }
 });
 
-router.put('/:userId', async (req, res) => {
+router.put('/update-user', async (req, res) => {
+  const userId = req.body.userId;
+  const { username, email, fullName, profilePic } = req.body;
+
   try {
-    const userId = req.params.userId;
-    const updatedProfileData = req.body;
+    const userIdObject = new mongoose.Types.ObjectId(userId); // Create ObjectId from userId
 
-    // Find the user by ID
-    const user = await User.findById(userId);
+    const updatedUser = await User.findByIdAndUpdate(userIdObject, {
+      username,
+      email,
+      fullName,
+      profilePic
+    }, { new: true }); // { new: true } returns the updated user
 
-    // Check if the user exists
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+    if (updatedUser) {
+      res.status(200).json({ message: 'User updated successfully', user: updatedUser });
+    } else {
+      res.status(404).json({ error: 'User not found' });
     }
-
-    // Update user properties with the provided data
-    Object.keys(updatedProfileData).forEach((key) => {
-      if (updatedProfileData[key] !== undefined) {
-        user[key] = updatedProfileData[key];
-      }
-    });
-
-    // Save the updated user
-    await user.save();
-
-    // Respond with the updated user data
-    res.json(user);
   } catch (error) {
-    console.error('Error updating profile:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error(error);
+    res.status(500).json({ error: 'Could not update user' });
   }
 });
 
@@ -89,9 +83,6 @@ router.get('/fetch/:userId', async (req, res) => {
     if (!user) {
       return res.json({ message: 'User not found' });
     }
-
-    // Exclude sensitive information like the password before sending the user data
-    // const sanitizedUser = { _id: user._id, username: user.username, email: user.email };
 
     res.json(user);
   } catch (error) {
@@ -132,23 +123,29 @@ router.post('/delete-user', async (req, res) => {
     }
   })
 })
-//update user route
+
 router.put('/update-user', async (req, res) => {
   const userId = req.body.userId;
-  const updatedData = {
-    username: req.body.username,
-    password: req.body.password,
-    email: req.body.email,
-  };
+  const { username, email, fullName, profilePic } = req.body;
 
-  User.findByIdAndUpdate(userId, updatedData, { new: true }, (err, updatedUser) => {
-    if (err) {
-      res.status(500).json({ error: 'Could not update user' });
+  try {
+    const updatedUser = await User.findByIdAndUpdate(userId, {
+      username,
+      email,
+      fullName,
+      profilePic
+    }, { new: true }); // { new: true } returns the updated user
+
+    if (updatedUser) {
+      res.json({ message: 'User updated successfully', user: updatedUser });
     } else {
-      res.status(200).json(updatedUser);
+      res.status(404).json({ error: 'User not found' });
     }
-  })
-})
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Could not update user' });
+  }
+});
 
 // Route for user login
 router.post('/login', async (req, res) => {
